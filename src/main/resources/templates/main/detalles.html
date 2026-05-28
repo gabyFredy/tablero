@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${main.titulo} + ' - Detalles'">Detalles del Registro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .info-row {
+            border-bottom: 1px solid #e9ecef;
+            padding: 12px 0;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        .info-value {
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <div class="card-container">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header bg-info text-white rounded-top-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="h3 mb-0">
+                            <i class="bi bi-eye-fill"></i> Ver Detalles
+                        </h1>
+                        <span class="badge bg-light text-dark" th:text="${main.seccion}">Sección</span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Título principal -->
+                    <h3 class="card-title text-info border-bottom pb-2 mb-4" th:text="${main.titulo}">
+                        Título
+                    </h3>
+                    
+                    <!-- Programa / Área -->
+                    <div class="info-row row">
+                        <div class="col-md-4 info-label">
+                            <i class="bi bi-tag-fill"></i> Programa / Área:
+                        </div>
+                        <div class="col-md-8 info-value">
+                            <span th:text="${main.programa}">Programa</span>
+                            <span th:if="${main.programa == null or main.programa == ''}" class="text-muted">No especificado</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Periodicidad -->
+                    <div class="info-row row">
+                        <div class="col-md-4 info-label">
+                            <i class="bi bi-calendar-week-fill"></i> Periodicidad:
+                        </div>
+                        <div class="col-md-8 info-value">
+                            <span class="badge bg-success fs-6 px-3 py-2" th:text="${main.tiempo}">Periodo</span>
+                            <span th:if="${main.tiempo == null or main.tiempo == ''}" class="text-muted">No especificado</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Porcentaje -->
+                    <div class="info-row row">
+                        <div class="col-md-4 info-label">
+                            <i class="bi bi-graph-up"></i> Avance Completado:
+                        </div>
+                        <div class="col-md-8 info-value">
+                            <div class="d-flex align-items-center">
+                                <div class="progress flex-grow-1 me-2" style="height: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         th:style="'width: ' + (${main.porcentaje != null ? main.porcentaje : 0}) + '%'">
+                                    </div>
+                                </div>
+                                <span class="badge bg-secondary fs-6" th:text="${main.porcentaje != null ? main.porcentaje + '%' : '0%'}">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sección (interna) -->
+                    <div class="info-row row">
+                        <div class="col-md-4 info-label">
+                            <i class="bi bi-folder-fill"></i> Sección:
+                        </div>
+                        <div class="col-md-8 info-value">
+                            <code th:text="${main.seccion}">seccion_tema</code>
+                        </div>
+                    </div>
+                    
+                    <!-- ID interno -->
+                    <div class="info-row row">
+                        <div class="col-md-4 info-label">
+                            <i class="bi bi-key-fill"></i> ID Interno:
+                        </div>
+                        <div class="col-md-8 info-value">
+                            <code class="text-muted" th:text="${main.id}">ID</code>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent border-top-0 d-flex gap-2 justify-content-end">
+                    <a th:href="@{'/' + ${seccionUrl} + '/' + ${temaUrl}}" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-left"></i> Volver a la lista
+                    </a>
+                    <a th:href="@{'/' + ${seccionUrl} + '/' + ${temaUrl} + '/editar/' + ${main.id}}" 
+                       class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="/" class="btn btn-outline-secondary">
+                        <i class="bi bi-house"></i> Inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

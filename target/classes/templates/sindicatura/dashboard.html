@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${seccionNombre} + ' - Dashboard'">Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .btn-custom { border-radius: 8px; font-weight: 500; }
+        .header-bar {
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            color: white;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+
+        <!-- Botón Volver -->
+        <div class="mb-4">
+            <a href="/" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Inicio
+            </a>
+        </div>
+
+        <!-- Encabezado -->
+        <div class="header-bar p-4 mb-5 text-center">
+            <h1 class="mb-2" th:utext="${seccionNombre}">Nombre de la Sección</h1>
+            <p class="lead mb-0">Seleccione el tema o programa a gestionar</p>
+        </div>
+
+        <!-- Botón Gráfica General de la Sección -->
+<div class="text-center mt-3">
+    <a th:href="@{'/' + ${seccion} + '/dashboard/grafica'}" class="btn btn-info btn-lg">
+        <i class="bi bi-graph-up"></i> Ver Gráfica General de la Sección
+    </a>
+
+        <!-- Opciones de Temas - NOMBRES ORIGINALES TAL CUAL LOS TENÍAS -->
+        <div class="row g-4">
+
+            <!-- Gobierno Solidario -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-hand-thumbs-up text-success" style="font-size: 2.5rem;"></i>
+                        <h5 class="card-title mt-3 mb-2">Representación de Legal de Municipio de Cuernavaca</h5>
+                        <a th:href="@{/{seccion}/representacion-legal (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
+                            Acceder
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
