@@ -67,19 +67,18 @@
             <div th:if="${error}" class="alert alert-danger" role="alert">
                 <i class="bi bi-exclamation-circle"></i> <span th:text="${error}">Error</span>
             </div>
+            <div th:if="${mensaje}" class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle"></i> <span th:text="${mensaje}">Mensaje</span>
+            </div>
 
             <!-- FORMULARIO -->
             <form th:action="@{${main.id == null ? 
-                '/{seccionUrl}/{temaUrl}/guardar' : 
-                '/{seccionUrl}/{temaUrl}/actualizar/{id}'}(
-                    seccionUrl=${seccionUrl}, 
-                    temaUrl=${temaUrl}, 
-                    id=${main.id}
-            )}" 
-                  method="post" th:object="${main}">
+                '/' + seccionUrl + '/' + temaUrl + '/guardar' : 
+                '/' + seccionUrl + '/' + temaUrl + '/actualizar/' + main.id}}" 
+                method="post" th:object="${main}">
 
                 <!-- Campo Seccion (Oculto) -->
-                <input type="hidden" th:field="*{seccion}" />
+                <input type="hidden" th:field="*{seccion}" th:value="${seccionUrl + '_' + temaUrl}" />
 
                 <!-- Título -->
                 <div class="mb-4">
@@ -93,9 +92,10 @@
                 <!-- Programa / Área Responsable (SOLO LECTURA) -->
                 <div class="mb-4">
                     <label for="programa" class="form-label fw-bold">Programa / Área Responsable</label>
+                    <input type="hidden" th:field="*{programa}" th:value="${tituloPagina}">
                     <input type="text" id="programa" th:value="${tituloPagina}" 
-                           class="form-control campo-solo-lectura" 
-                           readonly disabled>
+                        class="form-control campo-solo-lectura" 
+                        readonly disabled>
                     <!-- Campo oculto para enviar el valor al backend -->
                     <!--<input type="hidden" th:field="*{programa}" th:value="${tituloPagina}"> -->
                     <div class="form-text text-muted">
@@ -108,6 +108,8 @@
                     <label for="tiempo" class="form-label fw-bold">Periódicamente</label>
                     <select id="tiempo" th:field="*{tiempo}" class="form-select">
                         <option value="">Seleccione un periodo...</option>
+                        <option value="Minuto">Minuto</option>
+                        <option value="Hora">Hora</option>
                         <option value="Semanal">Semanal</option>
                         <option value="Quincenal">Quincenal</option>
                         <option value="Mensual">Mensual</option>

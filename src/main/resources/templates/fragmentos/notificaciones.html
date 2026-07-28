@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="notificaciones">
+    <!-- Icono de notificaciones -->
+    <div class="dropdown d-inline-block me-3">
+        <button class="btn btn-light position-relative" data-bs-toggle="dropdown" id="btnNotificaciones">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                  id="notifCount" style="font-size: 0.7rem;">0</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end" style="width: 380px; max-height: 450px; overflow-y: auto;">
+            <div class="dropdown-header fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-bell"></i> Notificaciones</span>
+                <button class="btn btn-sm btn-link" onclick="marcarTodasLeidas()">Marcar todas</button>
+            </div>
+            <div id="listaNotificaciones">
+                <div class="dropdown-item text-muted text-center py-3">Cargando...</div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-center" href="/notificaciones/todas">
+                <i class="bi bi-eye"></i> Ver todas
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function cargarNotificaciones() {
+            fetch('/api/notificaciones/no-leidas')
+                .then(res => res.json())
+                .then(notificaciones => {
+                    const count = notificaciones.length;
+                    document.getElementById('notifCount').textContent = count;
+                    
+                    const contenedor = document.getElementById('listaNotificaciones');
+                    if (count === 0) {
+                        contenedor.innerHTML = `
+                            <div class="dropdown-item text-muted text-center py-3">
+                                <i class="bi bi-check-circle"></i> No hay notificaciones nuevas
+                            </div>
+                        `;
+                    } else {
+                        contenedor.innerHTML = notificaciones.map(n => {
+                            let icono = 'bi-info-circle-fill text-primary';
+                            let bgClass = '';
+                            if (n.tipo === 'SUCCESS') {
+                                icono = 'bi-check-circle-fill text-success';
+                                bgClass = 'bg-success bg-opacity-10';
+                            } else if (n.tipo === 'WARNING') {
+                                icono = 'bi-exclamation-triangle-fill text-warning';
+                                bgClass = 'bg-warning bg-opacity-10';
+                            } else if (n.tipo === 'DANGER') {
+                                icono = 'bi-x-circle-fill text-danger';
+                                bgClass = 'bg-danger bg-opacity-10';
+                            }
+                            
+                            const fecha = new Date(n.fechaCreacion);
+                            const fechaStr = fecha.toLocaleDateString('es-MX', { 
+                                day: '2-digit', month: '2-digit', year: 'numeric',
+                                hour: '2-digit', minute: '2-digit'
+                            });
+                            
+                            return `
+                                <a class="dropdown-item ${bgClass}" href="${n.urlRelacionada || '#'}" onclick="marcarLeida('${n.id}')">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi ${icono} me-2 mt-1"></i>
+                                        <div>
+                                            <strong>${n.titulo}</strong>
+                                            <p class="small mb-1 text-muted">${n.mensaje}</p>
+                                            <small class="text-muted" style="font-size: 0.65rem;">
+                                                <i class="bi bi-clock"></i> ${fechaStr}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </a>
+                            `;
+                        }).join('');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cargando notificaciones:', error);
+                });
+        }
+
+        function marcarLeida(id) {
+            fetch('/api/notificaciones/marcar/' + id, { method: 'POST' })
+                .then(() => cargarNotificaciones())
+                .catch(error => console.error('Error:', error));
+        }
+
+        function marcarTodasLeidas() {
+            fetch('/api/notificaciones/marcar-todas', { method: 'POST' })
+                .then(() => cargarNotificaciones())
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Cargar cada 30 segundos
+        cargarNotificaciones();
+        setInterval(cargarNotificaciones, 30000);
+    </script>
+</div>
+

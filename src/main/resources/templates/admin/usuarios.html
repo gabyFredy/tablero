@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Administrar Usuarios - OmniView</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .badge-admin { background-color: #dc3545; }
+        .badge-user { background-color: #28a745; }
+        .switch-label {
+            cursor: pointer;
+            user-select: none;
+        }
+        .form-check-input:checked + .status-label {
+            color: #198754;
+        }
+        .form-check-input:not(:checked) + .status-label {
+            color: #6c757d;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== NAVBAR ========== -->
+        <nav class="navbar navbar-dark navbar-custom mb-4 p-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/inicio">
+                    <i class="bi bi-eye fs-4"></i>
+                    <strong>OmniView</strong> - Gobierno Municipal
+                </a>
+                
+                <div class="d-flex align-items-center">
+                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
+                        Usuario
+                    </span>
+
+                    <div th:replace="~{fragmentos/notificaciones :: notificaciones}"></div>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-light rounded-circle d-flex align-items-center justify-content-center" 
+                                style="width: 40px; height: 40px;" 
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false">
+                            <i class="bi bi-person-circle fs-4"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-user">
+                            <li class="user-info">
+                                <strong th:text="${#authentication != null ? #authentication.name : 'Usuario'}">Usuario</strong><br>
+                                <small class="text-muted" th:text="${#authentication != null ? #authentication.authorities : 'Rol'}">Rol</small>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="/perfil">
+                                    <i class="bi bi-person"></i> Mi Perfil
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/reportes">
+                                    <i class="bi bi-file-earmark-excel"></i> Reportes
+                                </a>
+                            </li>
+                            <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                                <a class="dropdown-item" href="/admin/usuarios">
+                                    <i class="bi bi-people-fill"></i> Administrar Usuarios
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button class="dropdown-item text-danger" type="submit">
+                                        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+    <div class="container-fluid px-4 py-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <a href="/inicio" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Volver al Inicio
+                </a>
+                <h2 class="d-inline ms-3"><i class="bi bi-people-fill"></i> Administrar Usuarios</h2>
+            </div>
+            <a href="/admin/usuarios/nuevo" class="btn btn-success">
+                <i class="bi bi-person-plus"></i> Nuevo Usuario
+            </a>
+        </div>
+
+        <!-- Mensajes -->
+        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle"></i> <span th:text="${mensaje}">Mensaje</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}">Error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <i class="bi bi-people-fill fs-1 text-primary"></i>
+                    <h3 th:text="${totalUsuarios}">0</h3>
+                    <p class="text-muted">Total Usuarios</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <i class="bi bi-shield-lock-fill fs-1 text-danger"></i>
+                    <h3 th:text="${totalAdmins}">0</h3>
+                    <p class="text-muted">Administradores</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <i class="bi bi-person fs-1 text-success"></i>
+                    <h3 th:text="${totalUsuariosNormales}">0</h3>
+                    <p class="text-muted">Usuarios Normales</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de usuarios -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Nombre Completo</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Area asignada</th>
+                            <th>Estado</th>
+                            <th>Verificado</th>
+                            <th>Fecha Registro</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${usuarios}">
+                            <td><strong th:text="${user.username}">username</strong></td>
+                            <td th:text="${user.nombreCompleto}">nombre</td>
+                            <td th:text="${user.email}">email</td>
+                            <td>
+                                <span th:if="${user.rol == 'ADMIN'}" class="badge badge-admin">ADMIN</span>
+                                <span th:if="${user.rol == 'USUARIO'}" class="badge badge-user">USUARIO</span>
+                            </td>
+                            <td>
+                                <span th:if="${user.rol == 'ADMIN'}">
+                                    <span class="badge bg-primary">Todas</span>
+                                </span>
+                                <span th:if="${user.rol == 'USUARIO' and user.seccionesAcceso != null}">
+                                    <span th:each="sec : ${user.seccionesAcceso}" class="badge bg-secondary me-1" 
+                                        th:text="${#strings.capitalize(sec)}">seccion</span>
+                                </span>
+                                <span th:if="${user.rol == 'USUARIO' and (user.seccionesAcceso == null or user.seccionesAcceso.empty)}">
+                                    <span class="badge bg-danger">Sin acceso</span>
+                                </span>
+                            </td>
+                            <!-- ✅ Estado con Toggle -->
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="form-check form-switch mb-0 me-2">
+                                        <input class="form-check-input" type="checkbox" 
+                                               th:checked="${user.enabled}"
+                                               th:data-id="${user.id}"
+                                               th:data-username="${user.username}"
+                                               onchange="toggleUsuario(this)"
+                                               style="cursor: pointer; width: 36px; height: 18px;">
+                                    </div>
+                                    <span th:if="${user.enabled}" class="badge bg-success status-label">Activo</span>
+                                    <span th:unless="${user.enabled}" class="badge bg-secondary status-label">Inactivo</span>
+                                </div>
+                            </td>
+                            <!-- ✅ Verificado -->
+                            <td>
+                                <span th:if="${user.emailVerificado}" class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Verificado
+                                </span>
+                                <span th:unless="${user.emailVerificado}" class="badge bg-warning text-dark">
+                                    <i class="bi bi-clock"></i> Pendiente
+                                </span>
+                            </td>
+                            <td th:text="${#temporals.format(user.fechaRegistro, 'dd/MM/yyyy')}">fecha</td>
+                            <td class="text-center">
+                                <a th:href="@{/admin/usuarios/editar/{id}(id=${user.id})}" 
+                                   class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a th:href="@{/admin/usuarios/eliminar/{id}(id=${user.id})}" 
+                                   class="btn btn-sm btn-outline-danger" 
+                                   title="Eliminar"
+                                   onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(usuarios)}">
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-1"></i>
+                                <p>No hay usuarios registrados</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleUsuario(checkbox) {
+            const id = checkbox.getAttribute('data-id');
+            const username = checkbox.getAttribute('data-username');
+            const statusSpan = checkbox.closest('td').querySelector('.status-label');
+            
+            // Guardar estado anterior para revertir si falla
+            const estabaActivado = checkbox.checked;
+            
+            // Deshabilitar mientras se procesa
+            checkbox.disabled = true;
+            
+            fetch('/admin/usuarios/toggle/' + id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar estado visual
+                    if (data.enabled) {
+                        statusSpan.className = 'badge bg-success status-label';
+                        statusSpan.textContent = 'Activo';
+                        checkbox.checked = true;
+                    } else {
+                        statusSpan.className = 'badge bg-secondary status-label';
+                        statusSpan.textContent = 'Inactivo';
+                        checkbox.checked = false;
+                    }
+                    mostrarMensaje('success', '✅ ' + data.mensaje + ' - ' + username);
+                } else {
+                    mostrarMensaje('danger', '❌ Error: ' + (data.error || 'No se pudo cambiar el estado'));
+                    checkbox.checked = estabaActivado;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarMensaje('danger', '❌ Error al cambiar el estado');
+                checkbox.checked = estabaActivado;
+            })
+            .finally(() => {
+                checkbox.disabled = false;
+            });
+        }
+
+        function mostrarMensaje(tipo, texto) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-' + tipo + ' alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                <i class="bi ${tipo === 'success' ? 'bi-check-circle' : 'bi-exclamation-triangle'}"></i>
+                <span>${texto}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const container = document.querySelector('.container-fluid');
+            const header = container.querySelector('.d-flex.justify-content-between');
+            container.insertBefore(alertDiv, header.nextSibling);
+            
+            // Auto-cerrar después de 5 segundos
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 300);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

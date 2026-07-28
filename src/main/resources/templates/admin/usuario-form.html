@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titulo} + ' - Usuario'">Usuario - OmniView</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #f0f2f5; }
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="form-card">
+            <div class="text-center mb-4">
+                <i class="bi bi-person-gear fs-1 text-primary"></i>
+                <h2 th:text="${titulo}">Usuario</h2>
+                <p class="text-muted">Complete los datos del usuario</p>
+            </div>
+
+            <form th:action="@{${accion == 'Crear' ? '/admin/usuarios/guardar' : '/admin/usuarios/actualizar/' + usuario.id}}" 
+                  method="post" th:object="${usuario}">
+
+                <input type="hidden" th:field="*{id}" th:if="${usuario.id != null}"/>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre de usuario *</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" th:field="*{username}" class="form-control" required
+                               th:readonly="${accion == 'Editar'}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre completo *</label>
+                    <input type="text" th:field="*{nombreCompleto}" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Correo electrónico *</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" th:field="*{email}" class="form-control" required>
+                    </div>
+                </div>
+
+                <div th:if="${accion == 'Crear'}" class="mb-3">
+                    <label class="form-label fw-bold">Contraseña *</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" th:field="*{password}" class="form-control" required>
+                    </div>
+                </div>
+
+                <div th:if="${accion == 'Crear'}" class="mb-3">
+                    <label class="form-label fw-bold">Confirmar contraseña *</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" name="confirmarPassword" class="form-control" required>
+                    </div>
+                </div>
+
+                <div th:if="${accion == 'Editar'}" class="mb-3">
+                    <label class="form-label fw-bold">Nueva contraseña (opcional)</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-key"></i></span>
+                        <input type="password" name="nuevaPassword" class="form-control">
+                    </div>
+                    <small class="text-muted">Dejar en blanco para mantener la contraseña actual</small>
+                </div>
+
+                <div th:if="${accion == 'Editar'}" class="mb-3">
+                    <label class="form-label fw-bold">Confirmar nueva contraseña</label>
+                    <input type="password" name="confirmarPassword" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Rol *</label>
+                    <select th:field="*{rol}" class="form-select" required>
+                        <option value="USUARIO">👤 Usuario Normal</option>
+                        <option value="ADMIN">👑 Administrador</option>
+                    </select>
+                </div>
+
+                <div id="seccionesAccesoContainer" th:if="${accion == 'Crear' or usuario.rol == 'USUARIO'}">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-building"></i> Secciones de Acceso
+                        </label>
+                        <p class="text-muted small">Selecciona las secciones a las que este usuario podrá acceder</p>
+                        
+                        <div class="row">
+                            <!-- ✅ Variable corregida: seccionesDisponibles -->
+                            <div th:each="seccion : ${seccionesDisponibles}" class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                        name="seccionesAcceso"
+                                        th:value="${seccion.key}"
+                                        th:checked="${usuario.seccionesAcceso != null and usuario.seccionesAcceso.contains(seccion.key)}"
+                                        id="seccion_${seccion.key}">
+                                    <label class="form-check-label" th:for="'seccion_' + ${seccion.key}" th:text="${seccion.value}">
+                                        Sección
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info small mt-2">
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>ADMIN</strong> tiene acceso a todas las secciones automáticamente.
+                            <strong>USUARIO</strong> solo tendrá acceso a las secciones seleccionadas.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" th:field="*{enabled}" class="form-check-input" id="enabled">
+                        <label class="form-check-label fw-bold" for="enabled">
+                            <i class="bi bi-check-circle"></i> Usuario activo
+                        </label>
+                    </div>
+                    <small class="text-muted">Si está desactivado, el usuario no podrá iniciar sesión</small>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/admin/usuarios" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> <span th:text="${accion}">Guardar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSeccionesAcceso() {
+            const rolSelect = document.querySelector('select[name="rol"]');
+            const container = document.getElementById('seccionesAccesoContainer');
+            if (rolSelect) {
+                if (rolSelect.value === 'ADMIN') {
+                    container.style.display = 'none';
+                    document.querySelectorAll('input[name="seccionesAcceso"]').forEach(cb => cb.checked = false);
+                } else {
+                    container.style.display = 'block';
+                }
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const rolSelect = document.querySelector('select[name="rol"]');
+            if (rolSelect) {
+                rolSelect.addEventListener('change', toggleSeccionesAcceso);
+                toggleSeccionesAcceso();
+            }
+        });
+    </script>
+</body>
+</html>

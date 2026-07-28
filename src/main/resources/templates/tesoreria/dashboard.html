@@ -6,104 +6,306 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body { background-color: #f8f9fa; }
-        .card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        body { 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
+        
+        .container {
+            flex: 1;
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
         }
-        .btn-custom { border-radius: 8px; font-weight: 500; }
+        
+        .btn-custom { 
+            border-radius: 10px; 
+            font-weight: 500;
+            padding: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+        }
+        
         .header-bar {
             background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
             color: white;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-bar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        /* Badge último acceso */
+        .badge-last-access {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffc107;
+            color: #000;
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+        
+        /* Tooltip personalizado */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+        
+        [data-tooltip]:before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            display: none;
+            z-index: 10;
+            margin-bottom: 5px;
+        }
+        
+        [data-tooltip]:hover:before {
+            display: block;
+        }
+        
+        /* Footer */
+        .footer {
+            background: white;
+            border-top: 1px solid #dee2e6;
+            margin-top: 4rem;
+            padding: 2rem 0;
+        }
+        
+        /* Íconos en cards */
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Breadcrumb personalizado */
+        .breadcrumb-custom {
+            background: white;
+            padding: 0.75rem 1.25rem;
             border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        /* Indicador de última visita */
+        .last-visited-badge {
+            background: #e7f1ff;
+            color: #0d6efd;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
-    <div class="container my-5">
-
-        <!-- Botón Volver -->
-        <div class="mb-4">
-            <a href="/" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Volver al Inicio
-            </a>
+    <div class="container my-4">
+        
+        <!-- Breadcrumb (miga de pan) -->
+        <nav class="mb-4 breadcrumb-custom">
+            <ol class="breadcrumb mb-0 bg-transparent">
+                <li class="breadcrumb-item">
+                    <a href="/" class="text-decoration-none">
+                        <i class="bi bi-house-door"></i> Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" th:text="${seccionNombre}" aria-current="page">
+                    Sección Actual
+                </li>
+            </ol>
+        </nav>
+        
+        
+        
+        <!-- Encabezado mejorado -->
+        <div class="header-bar p-5 mb-5 text-center">
+            <div class="position-relative">
+                <i class="bi bi-graph-up fs-1 mb-3 d-inline-block"></i>
+                <h1 class="mb-2 display-5 fw-bold" th:utext="${seccionNombre}">Nombre de la Sección</h1>
+                <p class="lead mb-0">¿Qué deseas revisar hoy?</p>
+            </div>
         </div>
-
-        <!-- Encabezado -->
-        <div class="header-bar p-4 mb-5 text-center">
-            <h1 class="mb-2" th:utext="${seccionNombre}">Nombre de la Sección</h1>
-            <p class="lead mb-0">Seleccione el tema o programa a gestionar</p>
+        
+        <!-- Botón Gráfica General -->
+        <div class="text-center mb-5">
+            <div class="card d-inline-block border-0 shadow-sm" style="max-width: 500px; margin: 0 auto;">
+                <div class="card-body p-4">
+                    <i class="bi bi-graph-up text-primary fs-1"></i>
+                    <h5 class="mt-2 mb-1">Análisis Visual Completo</h5>
+                    <p class="text-muted small">Consulta el resumen gráfico de toda la sección</p>
+                    <a th:href="@{'/' + ${seccion} + '/dashboard/grafica'}" class="btn btn-info btn-custom px-4">
+                        <i class="bi bi-graph-up"></i> Ver Gráfica General
+                    </a>
+                </div>
+            </div>
         </div>
-
-        <!-- Opciones de Temas - NOMBRES ORIGINALES TAL CUAL LOS TENÍAS -->
+        
+        <!-- Título de temas -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h3>
+                <i class="bi bi-grid-3x3-gap-fill text-primary"></i> Programas y Temas
+                <span class="badge bg-primary ms-2">5 activos</span>
+            </h3>
+            <span class="text-muted small" data-tooltip="Aquí encontrarás todos los temas disponibles para gestión">
+                <i class="bi bi-question-circle"></i> ¿Necesitas ayuda?
+            </span>
+        </div>
+        
+        <!-- Opciones de Temas - CON ÍCONOS DIFERENTES Y BADGE DE ÚLTIMO ACCESO -->
         <div class="row g-4">
-
+            
+            <!-- Tema 1 -->
             <div class="col-lg-4 col-md-6">
-                <div class="card h-100">
+                <div class="card h-100 position-relative">
+                    <!-- Badge de último acceso (simulado con th:if) -->
+                    <div class="badge-last-access" th:if="${ultimoAcceso == 'fortalecimiento-financiero'}">
+                        <i class="bi bi-clock"></i> Último acceso
+                    </div>
                     <div class="card-body text-center p-4">
-                        <i class="bi bi-hand-thumbs-up text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="card-title mt-3 mb-2">Fortalecimiento Financiero para el Desarrollo Municipal</h5>
+                        <div class="card-icon text-primary">
+                            <i class="bi bi-piggy-bank"></i>
+                        </div>
+                        <h5 class="card-title mt-2 mb-3">Fortalecimiento Financiero para el Desarrollo Municipal</h5>
                         <a th:href="@{/{seccion}/fortalecimiento-financiero (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
-                            Acceder
+                            <i class="bi bi-arrow-right-circle"></i> Acceder al tema
                         </a>
+                        <div class="last-visited-badge mt-2" th:if="${ultimoAcceso == 'fortalecimiento-financiero'}">
+                            <i class="bi bi-stopwatch"></i> Visitado recientemente
+                        </div>
                     </div>
                 </div>
             </div>
-
+            
+            <!-- Tema 2 -->
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
-                        <i class="bi bi-hand-thumbs-up text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="card-title mt-3 mb-2">Recaudación Eficiente y Equitativa de los Ingresos</h5>
+                        <div class="card-icon text-success">
+                            <i class="bi bi-calculator-fill"></i>
+                        </div>
+                        <h5 class="card-title mt-2 mb-3">Recaudación Eficiente y Equitativa de los Ingresos</h5>
                         <a th:href="@{/{seccion}/recaudacion-eficiente (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
-                            Acceder
+                            <i class="bi bi-arrow-right-circle"></i> Acceder al tema
                         </a>
                     </div>
                 </div>
             </div>
             
+            <!-- Tema 3 -->
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
-                        <i class="bi bi-hand-thumbs-up text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="card-title mt-3 mb-2">Recaudación del Impuesto Predial</h5>
+                        <div class="card-icon text-warning">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                        <h5 class="card-title mt-2 mb-3">Recaudación del Impuesto Predial</h5>
                         <a th:href="@{/{seccion}/recaudacion-impuesto-predial (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
-                            Acceder
+                            <i class="bi bi-arrow-right-circle"></i> Acceder al tema
                         </a>
                     </div>
                 </div>
             </div>
-
+            
+            <!-- Tema 4 -->
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
-                        <i class="bi bi-hand-thumbs-up text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="card-title mt-3 mb-2">Administración Eficiente del Recursos del Ayuntamiento de Cuernavaca</h5>
+                        <div class="card-icon text-info">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <h5 class="card-title mt-2 mb-3">Administración Eficiente del Recursos del Ayuntamiento de Cuernavaca</h5>
                         <a th:href="@{/{seccion}/administracion-eficiente-ayuntamiento (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
-                            Acceder
+                            <i class="bi bi-arrow-right-circle"></i> Acceder al tema
                         </a>
                     </div>
                 </div>
             </div>
-
+            
+            <!-- Tema 5 -->
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
-                        <i class="bi bi-hand-thumbs-up text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="card-title mt-3 mb-2">Control y Supervisión de la Representación Pupular</h5>
+                        <div class="card-icon text-danger">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h5 class="card-title mt-2 mb-3">Control y Supervisión de la Representación Popular</h5>
                         <a th:href="@{/{seccion}/control-supervision-representacion-popular (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
-                            Acceder
+                            <i class="bi bi-arrow-right-circle"></i> Acceder al tema
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <i class="bi bi-building text-primary"></i>
+                    <strong>OmniView - Tesorería</strong>
+                    <p class="text-muted small mt-2">Plataforma integral para el seguimiento y evaluación de programas municipales</p>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <h5>Contacto</h5>
+                    <p class="text-muted small mb-1"><i class="bi bi-envelope"></i>
+                        <a href="mailto:tesoreria@municipio.com">tesoreria@municipio.com</a>
+                    </p>
+                    <p class="text-muted small mb-0"><i class="bi bi-telephone"></i> +52 777 123 4567</p>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <h5>Redes Sociales</h5>
+                    <p class="text-muted small mb-1">
+                        <a href="https://www.facebook.com/municipio" class="text-muted me-2">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://www.twitter.com/municipio" class="text-muted me-2">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/company/municipio" class="text-muted">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                    </p>
+                </div>
+                <div class="col-12 mt-3 text-center">
+                    <p class="text-muted small mb-0">&copy; 2026 OmniView. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

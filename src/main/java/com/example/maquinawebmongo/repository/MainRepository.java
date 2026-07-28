@@ -21,4 +21,6 @@ public interface MainRepository extends MongoRepository<Main, String> {
     List<Main> findBySeccionAndPorcentajeGreaterThan(String seccion, int porcentaje);
 
     
+
+    
 }

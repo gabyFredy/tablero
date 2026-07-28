@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Todas las Notificaciones - OmniView</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .notificacion-leida {
+            opacity: 0.6;
+        }
+        .notificacion-no-leida {
+            font-weight: 500;
+            border-left: 4px solid #0d6efd;
+        }
+        .badge-tipo {
+            font-size: 0.7rem;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-volver {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+        }
+        .btn-volver:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+        .footer {
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            border-top: 1px solid #dee2e6;
+            margin-top: 4rem;
+            padding: 2rem 0;
+        }
+        .footer .text-muted {
+            color: rgba(255,255,255,0.7) !important;
+        }
+        .footer strong {
+            color: white;
+        }
+        .footer .text-body-tertiary {
+            color: rgba(255,255,255,0.8) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid px-4 py-4">
+
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-dark navbar-custom mb-4 p-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/inicio">
+                    <i class="bi bi-eye fs-4"></i>
+                    <strong>OmniView</strong> - Notificaciones
+                </a>
+                <div class="d-flex align-items-center">
+                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
+                        Usuario
+                    </span>
+                    <a href="/inicio" class="btn btn-light btn-sm">
+                        <i class="bi bi-house"></i> Inicio
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- BREADCRUMB -->
+        <nav class="breadcrumb-custom mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/inicio"><i class="bi bi-house-door"></i> Inicio</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Todas las Notificaciones</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="display-6"><i class="bi bi-bell"></i> Todas las Notificaciones</h2>
+                <p class="text-muted">Historial completo de tus notificaciones</p>
+            </div>
+            <div>
+                <span class="badge bg-danger p-2 me-2">
+                    <i class="bi bi-envelope"></i> No leídas: <span th:text="${noLeidas}">0</span>
+                </span>
+                <span class="badge bg-secondary p-2">
+                    <i class="bi bi-check-circle"></i> Total: <span th:text="${total}">0</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Tabla de notificaciones -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40px;">#</th>
+                            <th style="width: 40px;">Estado</th>
+                            <th>Título</th>
+                            <th>Mensaje</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                            <th class="text-center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="notif, iter : ${notificaciones}"
+                            th:class="${notif.leida} ? 'notificacion-leida' : 'notificacion-no-leida'">
+                            <td th:text="${iter.index + 1}">1</td>
+                            <td>
+                                <span th:if="${notif.leida}" class="badge bg-secondary">
+                                    <i class="bi bi-check-circle"></i> Leída
+                                </span>
+                                <span th:unless="${notif.leida}" class="badge bg-primary">
+                                    <i class="bi bi-envelope"></i> Nueva
+                                </span>
+                            </td>
+                            <td>
+                                <strong th:text="${notif.titulo}">Título</strong>
+                            </td>
+                            <td th:text="${notif.mensaje}">Mensaje</td>
+                            <td>
+                                <span th:if="${notif.tipo == 'SUCCESS'}" class="badge bg-success badge-tipo">
+                                    <i class="bi bi-check-circle"></i> Éxito
+                                </span>
+                                <span th:if="${notif.tipo == 'WARNING'}" class="badge bg-warning text-dark badge-tipo">
+                                    <i class="bi bi-exclamation-triangle"></i> Advertencia
+                                </span>
+                                <span th:if="${notif.tipo == 'DANGER'}" class="badge bg-danger badge-tipo">
+                                    <i class="bi bi-x-circle"></i> Crítico
+                                </span>
+                                <span th:if="${notif.tipo == 'INFO'}" class="badge bg-info badge-tipo">
+                                    <i class="bi bi-info-circle"></i> Información
+                                </span>
+                                <span th:if="${notif.tipo == null or notif.tipo == ''}" class="badge bg-secondary badge-tipo">
+                                    General
+                                </span>
+                            </td>
+                            <td>
+                                <span th:text="${#temporals.format(notif.fechaCreacion, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                            </td>
+                            <td class="text-center">
+                                <a th:if="${!notif.leida}"
+                                   th:href="@{${notif.urlRelacionada != null ? notif.urlRelacionada : '#'}}"
+                                   class="btn btn-sm btn-primary me-1"
+                                   onclick="marcarLeida('${notif.id}')"
+                                   title="Marcar como leída">
+                                    <i class="bi bi-check2"></i> Marcar leída
+                                </a>
+                                <span th:if="${notif.leida}" class="text-muted small">✓ Leída</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(notificaciones)}">
+                            <td colspan="7" class="text-center text-muted py-5">
+                                <i class="bi bi-inbox" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+                                <p class="mb-0">No hay notificaciones</p>
+                                <p class="small">Las notificaciones aparecerán aquí cuando las recibas</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <i class="bi bi-building text-body-tertiary"></i>
+                    <strong>OmniView - Presidencia Municipal</strong>
+                    <p class="text-muted small mt-2">Plataforma integral para el seguimiento y evaluación de programas municipales</p>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <small class="text-muted d-block">
+                        <i class="bi bi-envelope"></i> soporte@omniview.gob
+                    </small>
+                    <small class="text-muted d-block mt-1">
+                        <i class="bi bi-telephone"></i> (777) 123-4567
+                    </small>
+                </div>
+                <div class="col-md-3">
+                    <small class="text-muted">
+                        <i class="bi bi-calendar"></i> © 2026 - Todos los derechos reservados
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function marcarLeida(id) {
+            fetch('/api/notificaciones/marcar/' + id, { method: 'POST' })
+                .then(() => {
+                    location.reload();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,416 @@
+/* ======================================================
+   DASHBOARD SECCIONES - ESTILOS COMPLETOS
+   Archivo: dashboard-secciones.css
+   ====================================================== */
+
+/* --- RESET Y FONDO GENERAL --- */
+body { 
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.container {
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+/* --- TARJETAS (CARDS) --- */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    background: white;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* --- BOTONES PERSONALIZADOS --- */
+.btn-custom { 
+    border-radius: 10px; 
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+}
+
+.btn-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+/* --- HEADER BAR (encabezado de sección) --- */
+.header-bar {
+    background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+    color: white;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    padding: 3rem 2rem;
+    box-shadow: 0 8px 24px rgba(13, 110, 253, 0.2);
+}
+
+.header-bar::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.header-bar .position-relative {
+    position: relative;
+    z-index: 1;
+}
+
+.header-bar i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    opacity: 0.9;
+}
+
+.header-bar h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-bar .lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+/* --- NAVBAR --- */
+.navbar-custom {
+    background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 0.75rem 1.5rem;
+}
+
+.navbar-custom .navbar-brand {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+}
+
+.navbar-custom .navbar-brand i {
+    font-size: 1.75rem;
+}
+
+/* --- NOMBRE DE USUARIO EN NAVBAR --- */
+.navbar-custom .text-white {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* --- BOTÓN VOLVER --- */
+.btn-volver {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-volver:hover {
+    background: rgba(255,255,255,0.3);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* --- BOTÓN DE PERFIL (CIRCULAR) --- */
+.navbar-custom .btn-light {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.3s ease;
+}
+
+.navbar-custom .btn-light:hover {
+    transform: scale(1.05);
+    border-color: white;
+}
+
+.navbar-custom .btn-light i {
+    font-size: 1.5rem;
+    color: #0d6efd;
+}
+
+/* --- DROPDOWN DE USUARIO --- */
+.dropdown-user {
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    border: none;
+    padding: 0;
+    min-width: 220px;
+    overflow: hidden;
+}
+
+.dropdown-user .user-info {
+    padding: 16px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.dropdown-user .user-info strong {
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+.dropdown-user .user-info small {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.dropdown-user .dropdown-item {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.dropdown-user .dropdown-item:hover {
+    background: #f0f7ff;
+    border-left-color: #0d6efd;
+    color: #0d6efd;
+}
+
+.dropdown-user .dropdown-item.text-danger:hover {
+    background: #fef0f0;
+    border-left-color: #dc3545;
+    color: #dc3545;
+}
+
+.dropdown-user .dropdown-divider {
+    margin: 0;
+}
+
+/* --- BOTÓN GRÁFICA GENERAL (CARD CENTRADA) --- */
+.text-center .card {
+    max-width: 500px;
+    margin: 0 auto;
+    border: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.text-center .card .card-body {
+    padding: 2rem;
+}
+
+.text-center .card i {
+    font-size: 3rem;
+    color: #0d6efd;
+}
+
+.text-center .card h5 {
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.text-center .card .small {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* --- TÍTULO DE PROGRAMAS Y TEMAS --- */
+.d-flex h3 {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.d-flex h3 i {
+    margin-right: 10px;
+}
+
+/* --- TARJETAS DE PROGRAMAS --- */
+.row.g-4 .card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+}
+
+.row.g-4 .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+.row.g-4 .card .card-body {
+    padding: 2rem 1.5rem;
+}
+
+.row.g-4 .card i {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.row.g-4 .card .card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.row.g-4 .card .btn {
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.row.g-4 .card .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+}
+
+/* --- FOOTER --- */
+.footer {
+    background: white;
+    border-top: 1px solid #e9ecef;
+    margin-top: 4rem;
+    padding: 3rem 0 2rem;
+}
+
+.footer h5 {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+}
+
+.footer .text-muted {
+    color: #6c757d !important;
+}
+
+.footer a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer a:hover {
+    color: #0d6efd !important;
+}
+
+.footer .bi-building {
+    font-size: 1.25rem;
+    margin-right: 8px;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+    .header-bar h1 {
+        font-size: 2.5rem;
+    }
+    
+    .row.g-4 .card .card-title {
+        min-height: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-bar {
+        border-radius: 16px;
+        padding: 2rem 1.5rem;
+    }
+    
+    .header-bar h1 {
+        font-size: 2rem;
+    }
+    
+    .header-bar .lead {
+        font-size: 1rem;
+    }
+    
+    .navbar-custom {
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+    }
+    
+    .navbar-custom .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .btn-volver {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+    }
+    
+    .navbar-custom .text-white {
+        font-size: 0.8rem;
+        margin-right: 8px !important;
+    }
+    
+    .dropdown-user {
+        min-width: 200px;
+    }
+    
+    .text-center .card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .row.g-4 .card .card-body {
+        padding: 1.5rem 1rem;
+    }
+    
+    .footer {
+        padding: 2rem 0 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-bar h1 {
+        font-size: 1.75rem;
+    }
+    
+    .header-bar i {
+        font-size: 2.5rem;
+    }
+    
+    .navbar-custom .navbar-brand {
+        font-size: 0.9rem;
+    }
+    
+    .navbar-custom .navbar-brand i {
+        font-size: 1.25rem;
+    }
+    
+    .btn-volver {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+    }
+    
+    .navbar-custom .text-white {
+        display: none; /* Oculta el nombre en móvil para ahorrar espacio */
+    }
+    
+    .row.g-4 .card .card-title {
+        font-size: 0.95rem;
+        min-height: 2rem;
+    }
+}

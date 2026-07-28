@@ -12,50 +12,87 @@
             background: #ffffff;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
         }
         .header-card {
             background: linear-gradient(135deg, #198754 0%, #157347 100%);
             color: white;
             border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             text-align: center;
+        }
+        /* Contenedor de gráfica más pequeño */
+        .chart-wrapper {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        canvas {
+            max-height: 300px;
+            width: 100% !important;
+        }
+        /* Tabla más compacta */
+        .table td, .table th {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .progress {
+            height: 6px !important;
+        }
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem !important;
+        }
+        .header-card h1 {
+            font-size: 1.8rem;
+        }
+        .header-card p {
+            font-size: 0.9rem;
+        }
+        .btn-outline-secondary {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
         }
     </style>
 </head>
 <body>
-    <div class="container my-5">
+    <div class="container my-4">
         <!-- Header -->
         <div class="header-card">
-            <i class="bi bi-bar-chart-steps fs-1"></i>
+            <i class="bi bi-bar-chart-steps fs-2"></i>
             <h1 class="mt-2" th:text="${tituloPagina}">Programa</h1>
             <p class="mb-0">Avance de cada indicador</p>
         </div>
 
         <!-- Navegación -->
-        <div class="mb-4">
+        <div class="mb-3">
             <a th:href="@{'/' + ${seccionUrl} + '/' + ${temaUrl}}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Volver a la Lista
+                <i class="bi bi-arrow-left"></i> Volver
             </a>
         </div>
 
-        <!-- Gráfica de Barras Horizontales -->
-        <div class="chart-container">
-            <h4 class="text-center mb-4">📊 Avance por Indicador</h4>
-            <canvas id="barChart"></canvas>
+        <!-- Gráfica de Barras Horizontales - Tamaño reducido -->
+        <div class="chart-container text-center">
+            <h4 class="mb-3">📊 Avance por Indicador</h4>
+            <div class="chart-wrapper">
+                <canvas id="barChart"></canvas>
+            </div>
         </div>
 
         <!-- Tabla de indicadores -->
         <div class="chart-container">
-            <h4 class="text-center mb-4">📋 Detalle de Indicadores</h4>
+            <h4 class="mb-3">📋 Detalle de Indicadores</h4>
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover table-sm">
                     <thead class="table-light">
                         <tr>
                             <th>Indicador</th>
-                            <th>Avance (%)</th>
+                            <th style="width: 180px">Avance (%)</th>
                         </tr>
                     </thead>
                     <tbody id="tablaIndicadores">
@@ -77,7 +114,7 @@
                 const nombres = data.map(item => item.nombre);
                 const porcentajes = data.map(item => item.porcentaje);
                 
-                // Gráfica de Barras Horizontales
+                // Gráfica de Barras Horizontales - Tamaño reducido
                 const ctxBar = document.getElementById('barChart').getContext('2d');
                 new Chart(ctxBar, {
                     type: 'bar',
@@ -93,8 +130,26 @@
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: true,
                         indexAxis: 'y',
-                        scales: { x: { beginAtZero: true, max: 100, title: { display: true, text: 'Porcentaje (%)' } } }
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { font: { size: 10 } }
+                            },
+                            tooltip: { bodyFont: { size: 11 } }
+                        },
+                        scales: { 
+                            x: { 
+                                beginAtZero: true, 
+                                max: 100, 
+                                title: { display: true, text: 'Porcentaje (%)', font: { size: 10 } },
+                                ticks: { font: { size: 9 } }
+                            },
+                            y: {
+                                ticks: { font: { size: 10 } }
+                            }
+                        }
                     }
                 });
                 
@@ -106,7 +161,7 @@
                     row.insertCell(0).textContent = data[i].nombre;
                     row.insertCell(1).innerHTML = `
                         <div class="d-flex align-items-center">
-                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                            <div class="progress flex-grow-1 me-2">
                                 <div class="progress-bar bg-success" style="width: ${data[i].porcentaje}%"></div>
                             </div>
                             <span class="badge bg-secondary">${data[i].porcentaje}%</span>
