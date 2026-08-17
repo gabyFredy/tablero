@@ -49,17 +49,17 @@ public class PerfilController {
     }
 
     // ==================== FORMULARIO CAMBIAR CONTRASEÑA ====================
-    @GetMapping("/cambiar-password")
+    @GetMapping("/cambiar-contraseña")
     public String cambiarPasswordForm(Model model, Authentication auth) {
         if (auth == null) {
             return "redirect:/login";
         }
         model.addAttribute("usuario", auth.getName());
-        return "cambiar-password";
+        return "cambiar-contraseña";
     }
 
     // ==================== PROCESAR CAMBIO DE CONTRASEÑA ====================
-    @PostMapping("/cambiar-password")
+    @PostMapping("/cambiar-contraseña")
     public String cambiarPassword(@RequestParam String passwordActual,
                                   @RequestParam String passwordNueva,
                                   @RequestParam String confirmarPassword,
@@ -83,25 +83,25 @@ public class PerfilController {
             // 1. Validar que la contraseña actual sea correcta
             if (!passwordEncoder.matches(passwordActual, usuario.getPassword())) {
                 ra.addFlashAttribute("error", "❌ La contraseña actual es incorrecta");
-                return "redirect:/perfil/cambiar-password";
+                return "redirect:/perfil/cambiar-contraseña";
             }
 
             // 2. Validar que la nueva contraseña tenga mínimo 6 caracteres
             if (passwordNueva.length() < 6) {
                 ra.addFlashAttribute("error", "❌ La nueva contraseña debe tener al menos 6 caracteres");
-                return "redirect:/perfil/cambiar-password";
+                return "redirect:/perfil/cambiar-contraseña";
             }
 
             // 3. Validar que las contraseñas coincidan
             if (!passwordNueva.equals(confirmarPassword)) {
                 ra.addFlashAttribute("error", "❌ Las contraseñas no coinciden");
-                return "redirect:/perfil/cambiar-password";
+                return "redirect:/perfil/cambiar-contraseña";
             }
 
             // 4. Validar que la nueva contraseña no sea igual a la actual
             if (passwordEncoder.matches(passwordNueva, usuario.getPassword())) {
                 ra.addFlashAttribute("error", "❌ La nueva contraseña debe ser diferente a la actual");
-                return "redirect:/perfil/cambiar-password";
+                return "redirect:/perfil/cambiar-contraseña";
             }
 
             // 5. Guardar la nueva contraseña
@@ -113,7 +113,7 @@ public class PerfilController {
 
         } catch (Exception e) {
             ra.addFlashAttribute("error", "❌ Error al cambiar la contraseña: " + e.getMessage());
-            return "redirect:/perfil/cambiar-password";
+            return "redirect:/perfil/cambiar-contraseña";
         }
     }
 }
