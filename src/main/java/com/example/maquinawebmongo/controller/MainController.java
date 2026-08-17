@@ -98,28 +98,7 @@ public class MainController {
         return "inicio";
     }
 
-    @GetMapping("/perfil")
-    public String perfil(Model model, Authentication auth) {
-        model.addAttribute("username", auth.getName());
-        model.addAttribute("roles", auth.getAuthorities());
-
-        String username = auth.getName();
-        Usuario usuario = usuarioService.buscarPorUsername(username).orElse(null);
-        
-        if (usuario != null) {
-            model.addAttribute("username", usuario.getUsername());
-            model.addAttribute("nombreCompleto", usuario.getNombreCompleto());
-            model.addAttribute("email", usuario.getEmail());
-            model.addAttribute("roles", auth.getAuthorities());
-            model.addAttribute("fechaRegistro", usuario.getFechaRegistro() != null ? 
-                new java.text.SimpleDateFormat("dd/MM/yyyy").format(java.util.Date.from(
-                    usuario.getFechaRegistro().atZone(ZONA_MEXICO).toInstant()
-                )) : "no disponible");
-        }
-        
-        return "perfil";
-    }
-
+    
     @GetMapping("/{seccion}/dashboard")
     public String dashboard(@PathVariable String seccion, Model model, Authentication auth, RedirectAttributes ra) {
         if (!tieneAccesoASeccion(seccion, auth)) {
