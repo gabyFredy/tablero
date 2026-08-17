@@ -2,6 +2,7 @@ package com.example.maquinawebmongo.service;
 
 import com.example.maquinawebmongo.model.Usuario;
 import com.example.maquinawebmongo.repository.UsuarioRepository;
+import com.example.maquinawebmongo.service.SendGridEmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +22,7 @@ import jakarta.annotation.PostConstruct;
 public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
-    private final EmailService emailService;
+    private final SendGridEmailService emailService;
 
     @Value("${app.url}")
     private String appUrl;
@@ -29,7 +30,7 @@ public class UsuarioService implements UserDetailsService {
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private static final ZoneId ZONA_MEXICO = ZoneId.of("America/Mexico_City");
 
-    UsuarioService(UsuarioRepository usuarioRepository, EmailService emailService) {
+    UsuarioService(UsuarioRepository usuarioRepository, SendGridEmailService emailService) {
         this.usuarioRepository = usuarioRepository;
         this.emailService = emailService;
     }

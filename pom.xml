@@ -52,6 +52,12 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>4.10.1</version>
+		</dependency>
+
 		<!-- Thymeleaf para templates de correo -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
