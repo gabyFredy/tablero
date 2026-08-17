@@ -7,10 +7,13 @@ import com.example.maquinawebmongo.service.UsuarioService;
 //import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
-@RestController
+// ✅ CAMBIADO: @RestController → @Controller (para manejar vistas y JSON)
+@Controller
 @RequestMapping("/api/notificaciones")
 public class NotificacionController {
 
@@ -22,7 +25,10 @@ public class NotificacionController {
         this.usuarioService = usuarioService;
     }
 
+    // ==================== API REST (JSON) ====================
+    
     @GetMapping("/no-leidas")
+    @ResponseBody  // ✅ Agregado para devolver JSON
     public ResponseEntity<List<Notificacion>> getNoLeidas(Authentication auth) {
         String username = auth.getName();
         System.out.println("🔍 Usuario autenticado: " + username);
@@ -44,6 +50,7 @@ public class NotificacionController {
     }
 
     @GetMapping("/count")
+    @ResponseBody  // ✅ Agregado para devolver JSON
     public ResponseEntity<Map<String, Long>> getCount(Authentication auth) {
         String username = auth.getName();
         Optional<Usuario> usuarioOpt = usuarioService.buscarPorUsername(username);
@@ -58,6 +65,7 @@ public class NotificacionController {
     }
 
     @PostMapping("/marcar/{id}")
+    @ResponseBody  // ✅ Agregado para devolver JSON
     public ResponseEntity<Map<String, Boolean>> marcarLeida(@PathVariable String id) {
         notificacionService.marcarComoLeida(id);
         Map<String, Boolean> response = new HashMap<>();
@@ -66,6 +74,7 @@ public class NotificacionController {
     }
 
     @PostMapping("/marcar-todas")
+    @ResponseBody  // ✅ Agregado para devolver JSON
     public ResponseEntity<Map<String, Boolean>> marcarTodas(Authentication auth) {
         String username = auth.getName();
         Optional<Usuario> usuarioOpt = usuarioService.buscarPorUsername(username);
@@ -79,5 +88,47 @@ public class NotificacionController {
         return ResponseEntity.ok(response);
     }
 
+    // ==================== VISTA HTML ====================
     
+    @GetMapping("/todas")
+    public String verTodasNotificaciones(Authentication auth, Model model) {
+        System.out.println("🔍 Entrando a /api/notificaciones/todas");
+        
+        try {
+            String username = auth.getName();
+            System.out.println("🔍 Usuario: " + username);
+            
+            Optional<Usuario> usuarioOpt = usuarioService.buscarPorUsername(username);
+            
+            if (usuarioOpt.isPresent()) {
+                String usuarioId = usuarioOpt.get().getId();
+                System.out.println("🔍 Usuario ID: " + usuarioId);
+                
+                // Obtener TODAS las notificaciones (leídas y no leídas)
+                List<Notificacion> todas = notificacionService.getTodas(usuarioId);
+                long noLeidas = notificacionService.contarNoLeidas(usuarioId);
+                
+                System.out.println("📩 Notificaciones encontradas: " + (todas != null ? todas.size() : 0));
+                
+                model.addAttribute("notificaciones", todas != null ? todas : new ArrayList<>());
+                model.addAttribute("noLeidas", noLeidas);
+                model.addAttribute("total", todas != null ? todas.size() : 0);
+            } else {
+                System.out.println("❌ Usuario no encontrado");
+                model.addAttribute("notificaciones", new ArrayList<>());
+                model.addAttribute("noLeidas", 0);
+                model.addAttribute("total", 0);
+            }
+            
+            return "notificaciones/todas";
+            
+        } catch (Exception e) {
+            System.out.println("❌ ERROR en /api/notificaciones/todas: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("notificaciones", new ArrayList<>());
+            model.addAttribute("noLeidas", 0);
+            model.addAttribute("total", 0);
+            return "notificaciones/todas";
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.maquinawebmongo.controller;
 
+import com.example.maquinawebmongo.model.BusquedaResultado;
 import com.example.maquinawebmongo.model.GraficaData;
 import com.example.maquinawebmongo.model.Main;
 import com.example.maquinawebmongo.model.Usuario;
@@ -8,11 +9,9 @@ import com.example.maquinawebmongo.service.NotificacionService;
 import com.example.maquinawebmongo.repository.NotificacionRepository;
 import com.example.maquinawebmongo.service.UsuarioService;
 
-//import jakarta.servlet.http.HttpServletRequest;
-
-//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,19 +26,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.time.Duration;
+import java.util.Arrays;
 
 @Controller
 public class MainController {
 
+    // ✅ Zona horaria fija para México
+    private static final ZoneId ZONA_MEXICO = ZoneId.of("America/Mexico_City");
+
     private final MainRepository mainRepository;
-
     private final NotificacionService notificacionService;
-
     private final NotificacionRepository notificacionRepository;
-
     private final UsuarioService usuarioService;
 
-    public MainController(MainRepository mainRepository, NotificacionService notificacionService, NotificacionRepository notificacionRepository, UsuarioService usuarioService) {
+    public MainController(MainRepository mainRepository, NotificacionService notificacionService, 
+                          NotificacionRepository notificacionRepository, UsuarioService usuarioService) {
         this.mainRepository = mainRepository;
         this.notificacionService = notificacionService;
         this.notificacionRepository = notificacionRepository;
@@ -47,43 +48,158 @@ public class MainController {
     }
 
     private boolean esAdmin() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth != null && auth.getAuthorities().stream()
-            .anyMatch(g -> g.getAuthority().endsWith("ADMIN"));
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth == null) return false;
+    
+    // ✅ Verificar autoridades (funciona para ROLE_ADMIN y ADMIN)
+    return auth.getAuthorities().stream()
+        .anyMatch(g -> {
+            String authority = g.getAuthority();
+            // ✅ Acepta ROLE_ADMIN, ADMIN, o cualquier cosa que termine en ADMIN
+            return "ROLE_ADMIN".equals(authority) || 
+                   "ADMIN".equals(authority) ||
+                   authority.endsWith("ADMIN");
+        });
     }
 
-    
+    private Double formatearPorcentaje(Double valor) {
+        if (valor == null) return 0.0;
+        return Math.round(valor * 100.0) / 100.0;
+    }
 
-    // ==================== PÁGINA PRINCIPAL ====================
     @GetMapping({"/", "/inicio"})
-    public String inicio() {
+    public String inicio(Model model, Authentication auth) {
+        if (auth != null) {
+            model.addAttribute("username", auth.getName());
+            model.addAttribute("esAdmin", esAdmin());
+            model.addAttribute("roles", auth.getAuthorities());
+            System.out.println("🔍 Usuario en inicio: " + auth.getName());
+            System.out.println("🔍 ¿Es admin? " + esAdmin());
+            System.out.println("🔍 Authorities: " + auth.getAuthorities());
+        } else {
+            model.addAttribute("username", "Invitado");
+            model.addAttribute("esAdmin", false);
+        }
+        
+        List<Main> todos = mainRepository.findAll();
+        model.addAttribute("totalIndicadores", todos.size());
+        
+        Map<String, Integer> conteoPorSeccion = new HashMap<>();
+        for (Main item : todos) {
+            String seccion = item.getSeccion();
+            if (seccion != null) {
+                String[] partes = seccion.split("_");
+                String seccionNombre = partes.length > 0 ? partes[0] : "otras";
+                conteoPorSeccion.put(seccionNombre, conteoPorSeccion.getOrDefault(seccionNombre, 0) + 1);
+            }
+        }
+        model.addAttribute("conteoPorSeccion", conteoPorSeccion);
+        
         return "inicio";
     }
 
     @GetMapping("/perfil")
-public String perfil(Model model, Authentication auth) {
-    model.addAttribute("username", auth.getName());
-    model.addAttribute("roles", auth.getAuthorities());
-
-    String username = auth.getName();
-    Usuario usuario = usuarioService.buscarPorUsername(username).orElse(null);
-    
-    if (usuario != null) {
-        model.addAttribute("username", usuario.getUsername());
-        model.addAttribute("nombreCompleto", usuario.getNombreCompleto());
-        model.addAttribute("email", usuario.getEmail());
+    public String perfil(Model model, Authentication auth) {
+        model.addAttribute("username", auth.getName());
         model.addAttribute("roles", auth.getAuthorities());
-        model.addAttribute("fechaRegistro", usuario.getFechaRegistro() != null ? 
-            new java.text.SimpleDateFormat("dd/MM/yyyy").format(usuario.getFechaRegistro()) : "no disponible");
-    }
-    
-    return "perfil";
-}
 
-    // ==================== DASHBOARD DE CADA SECCIÓN ====================
+        String username = auth.getName();
+        Usuario usuario = usuarioService.buscarPorUsername(username).orElse(null);
+        
+        if (usuario != null) {
+            model.addAttribute("username", usuario.getUsername());
+            model.addAttribute("nombreCompleto", usuario.getNombreCompleto());
+            model.addAttribute("email", usuario.getEmail());
+            model.addAttribute("roles", auth.getAuthorities());
+            model.addAttribute("fechaRegistro", usuario.getFechaRegistro() != null ? 
+                new java.text.SimpleDateFormat("dd/MM/yyyy").format(java.util.Date.from(
+                    usuario.getFechaRegistro().atZone(ZONA_MEXICO).toInstant()
+                )) : "no disponible");
+        }
+        
+        return "perfil";
+    }
+
+    // ==================== CAMBIAR CONTRASEÑA ====================
+
+    @GetMapping("/cambiar-password")
+    public String cambiarPasswordForm(Model model, Authentication auth) {
+        // Verificar que el usuario esté autenticado
+        if (auth == null || !auth.isAuthenticated()) {
+            return "redirect:/login";
+        }
+        
+        // Obtener el nombre de usuario para mostrarlo en la vista
+        String username = auth.getName();
+        model.addAttribute("usuario", username);
+        
+        return "cambiar-password"; // Esto debe coincidir con el nombre del archivo HTML
+    }
+
+    @PostMapping("/cambiar-password")
+    public String cambiarPassword(@RequestParam String passwordActual,
+                                @RequestParam String passwordNueva,
+                                @RequestParam String confirmarPassword,
+                                RedirectAttributes ra,
+                                Authentication auth) {
+        try {
+            System.out.println("🔍 Iniciando cambio de contraseña...");
+            
+            if (auth == null) {
+                ra.addFlashAttribute("error", "❌ Debes iniciar sesión para cambiar tu contraseña");
+                return "redirect:/login";
+            }
+
+            String username = auth.getName();
+            Usuario usuario = usuarioService.buscarPorUsername(username).orElse(null);
+
+            if (usuario == null) {
+                ra.addFlashAttribute("error", "❌ Usuario no encontrado");
+                return "redirect:/perfil";
+            }
+
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+            // 1. Validar que la contraseña actual sea correcta
+            if (!passwordEncoder.matches(passwordActual, usuario.getPassword())) {
+                ra.addFlashAttribute("error", "❌ La contraseña actual es incorrecta");
+                return "redirect:/cambiar-password";
+            }
+
+            // 2. Validar que la nueva contraseña tenga mínimo 6 caracteres
+            if (passwordNueva.length() < 6) {
+                ra.addFlashAttribute("error", "❌ La nueva contraseña debe tener al menos 6 caracteres");
+                return "redirect:/cambiar-password";
+            }
+
+            // 3. Validar que las contraseñas coincidan
+            if (!passwordNueva.equals(confirmarPassword)) {
+                ra.addFlashAttribute("error", "❌ Las contraseñas no coinciden");
+                return "redirect:/cambiar-password";
+            }
+
+            // 4. Validar que la nueva contraseña no sea igual a la actual
+            if (passwordEncoder.matches(passwordNueva, usuario.getPassword())) {
+                ra.addFlashAttribute("error", "❌ La nueva contraseña debe ser diferente a la actual");
+                return "redirect:/cambiar-password";
+            }
+
+            // 5. Guardar la nueva contraseña (SIN encriptar, porque actualizarUsuario lo hará)
+            usuario.setPassword(passwordNueva);  // ✅ Guardar la contraseña SIN encriptar
+            usuarioService.actualizarUsuario(usuario);  // ✅ Aquí se encriptará
+
+            ra.addFlashAttribute("mensaje", "✅ Contraseña actualizada exitosamente");
+            return "redirect:/perfil";
+
+        } catch (Exception e) {
+            System.err.println("❌ ERROR: " + e.getMessage());
+            e.printStackTrace();
+            ra.addFlashAttribute("error", "❌ Error al cambiar la contraseña: " + e.getMessage());
+            return "redirect:/cambiar-password";
+        }
+    }
     @GetMapping("/{seccion}/dashboard")
     public String dashboard(@PathVariable String seccion, Model model, Authentication auth, RedirectAttributes ra) {
-        // Verificar Acceso
         if (!tieneAccesoASeccion(seccion, auth)) {
             ra.addFlashAttribute("error", "Acceso denegado - No tienes acceso a esta sección");
             return "redirect:/inicio";
@@ -93,11 +209,9 @@ public String perfil(Model model, Authentication auth) {
         return seccion + "/dashboard";
     }
 
-    // ==================== DIAGNÓSTICO (SOLO ADMIN) ====================
     @GetMapping("/debug/ver-programas")
     @ResponseBody
     public String verProgramas() {
-        // 🔒 SOLO ADMIN
         if(!esAdmin()) return "NO AUTORIZADO";
         
         List<Main> todos = mainRepository.findAll();
@@ -107,7 +221,7 @@ public String perfil(Model model, Authentication auth) {
             sb.append("<li>");
             sb.append("<strong>Título:</strong> ").append(item.getTitulo()).append("<br>");
             sb.append("<strong>Programa:</strong> '").append(item.getPrograma()).append("'<br>");
-            sb.append("<strong>¿Es null?</strong> ").append(item.getPrograma() == null).append("<br>");
+            sb.append("<strong>Color:</strong> '").append(item.getColorSeleccionado()).append("'<br>");
             sb.append("</li><hr>");
         }
         sb.append("</ul></body></html>");
@@ -117,7 +231,6 @@ public String perfil(Model model, Authentication auth) {
     @GetMapping("/debug/actualizar-programas")
     @ResponseBody
     public String actualizarProgramas() {
-        // 🔒 SOLO ADMIN
         if(!esAdmin()) return "NO AUTORIZADO";
 
         List<Main> todos = mainRepository.findAll();
@@ -140,18 +253,28 @@ public String perfil(Model model, Authentication auth) {
         return "Se actualizaron " + actualizados + " registros con el nombre del programa";
     }
 
-    // ==================== CRUD ====================
-
-    // Listar elementos (Todos autenticados)
     @GetMapping("/{seccion}/{tema}")
-    public String listarTema(@PathVariable String seccion, @PathVariable String tema, Model model, Authentication auth, RedirectAttributes ra) {
-        // Verificar Acceso
+    public String listarTema(@PathVariable String seccion, @PathVariable String tema, 
+                             Model model, Authentication auth, RedirectAttributes ra) {
         if (!tieneAccesoASeccion(seccion, auth)) {
             ra.addFlashAttribute("error", "Acceso denegado - No tienes acceso a esta sección");
             return "redirect:/inicio";
         }
+        
         String coleccion = seccion + "_" + tema;
-        List<Main> mainList = mainRepository.findBySeccion(coleccion);
+        List<Main> mainList = mainRepository.findBySeccionOrderByOrdenAsc(coleccion);
+        
+        boolean necesitaActualizar = false;
+        for (int i = 0; i < mainList.size(); i++) {
+            Main item = mainList.get(i);
+            if (item.getOrden() == null || item.getOrden() == 0) {
+                item.setOrden(i + 1);
+                necesitaActualizar = true;
+            }
+        }
+        if (necesitaActualizar) {
+            mainRepository.saveAll(mainList);
+        }
 
         List<Map<String, Object>> mainListProcesada = new ArrayList<>();
         for (Main item : mainList) {
@@ -159,8 +282,10 @@ public String perfil(Model model, Authentication auth) {
             datos.put("id", item.getId());
             datos.put("titulo", item.getTitulo());
             datos.put("tiempo", item.getTiempo());
-            datos.put("porcentaje", item.getPorcentaje());
+            datos.put("porcentaje", item.getPorcentaje() != null ? item.getPorcentaje() : 0.0);
             datos.put("programa", item.getPrograma());
+            datos.put("orden", item.getOrden());
+            datos.put("colorSeleccionado", item.getColorSeleccionado());
 
             boolean puedeEditar = calcularPuedeEditar(item);
             datos.put("puedeEditar", puedeEditar);
@@ -168,7 +293,7 @@ public String perfil(Model model, Authentication auth) {
             long fechaCreacion = 0;
             if (item.getFechaCreacion() != null) {
                 fechaCreacion = item.getFechaCreacion()
-                        .atZone(ZoneId.systemDefault())
+                        .atZone(ZONA_MEXICO)
                         .toInstant()
                         .toEpochMilli();
             }
@@ -177,28 +302,21 @@ public String perfil(Model model, Authentication auth) {
             long fechaUltimaEdicion = 0;
             if (item.getFechaUltimaEdicion() != null) {
                 fechaUltimaEdicion = item.getFechaUltimaEdicion()
-                        .atZone(ZoneId.systemDefault())
+                        .atZone(ZONA_MEXICO)
                         .toInstant()
                         .toEpochMilli();
             }
             datos.put("fechaUltimaEdicion", fechaUltimaEdicion);
 
             mainListProcesada.add(datos);
-
-            System.out.println("ID: " + item.getId() + 
-            " | Título: " + item.getTitulo() + 
-            " | Fecha Creación: " + item.getFechaCreacion() + 
-            " | Tiempo: " + item.getTiempo() + 
-            " | Puede Editar: " + puedeEditar);
         }
-        
 
         model.addAttribute("mainList", mainListProcesada);
         model.addAttribute("seccionUrl", seccion);
         model.addAttribute("temaUrl", tema);
         model.addAttribute("tituloPagina", getNombreTema(tema));
-        model.addAttribute("esAdmin", esAdmin()); // Pasamos variable a la vista para ocultar botones
-        model.addAttribute("fechaActual", LocalDateTime.now()); // Para mostrar la fecha actual en la vista
+        model.addAttribute("esAdmin", esAdmin());
+        model.addAttribute("fechaActual", LocalDateTime.now(ZONA_MEXICO));
         return "main/lista";
     }
 
@@ -206,76 +324,48 @@ public String perfil(Model model, Authentication auth) {
         if (item.getFechaCreacion() == null || item.getTiempo() == null) {
             return false;
         }
-
-        LocalDateTime ahora = LocalDateTime.now();
-        
-        // ✅ Verificar mes permitido
+        LocalDateTime ahora = LocalDateTime.now(ZONA_MEXICO);
         if (!esMesPermitido(ahora)) {
             return false;
         }
         
-        // ✅ Verificar día laboral
         if (!esDiaLaboral(ahora)) {
             return false;
         }
 
-        // Usar fecha de última actualización si está disponible, sino fecha de creación
         LocalDateTime fechaBase = item.getFechaUltimaEdicion() != null 
             ? item.getFechaUltimaEdicion() 
             : item.getFechaCreacion();
 
-        // Calcular diferencia en días
         long diffEnDias = ChronoUnit.DAYS.between(fechaBase, ahora);
 
-        switch (item.getTiempo()) {
-            case "Minuto": 
-                return Duration.between(fechaBase, ahora).toMinutes() >= 1;
-            case "Hora": 
-                return Duration.between(fechaBase, ahora).toHours() >= 1;
-            case "Diario": 
-                return diffEnDias >= 1;
-            case "Semanal": 
-                return diffEnDias >= 7;
-            case "Quincenal": 
-                return diffEnDias >= 15;
-            case "Mensual": 
-                return diffEnDias >= 30;
-            case "Bimestral": 
-                return diffEnDias >= 60;
-            case "Trimestral": 
-                return diffEnDias >= 90;
-            case "Cuatrimestral": 
-                return diffEnDias >= 120;
-            case "Semestral": 
-                return diffEnDias >= 180;
-            case "Anual": 
-                return diffEnDias >= 365;
-            default: 
-                return false;
-        }
+        return switch (item.getTiempo()) {
+            case "Mensual" -> diffEnDias >= 30;
+            case "Bimestral" -> diffEnDias >= 60;
+            case "Trimestral" -> diffEnDias >= 90;
+            case "Cuatrimestral" -> diffEnDias >= 120;
+            case "Semestral" -> diffEnDias >= 180;
+            case "Anual" -> diffEnDias >= 365;
+            default -> false;
+        };
     }
 
-    // ✅ Verificar si el mes actual es Febrero(2), Mayo(5), Agosto(8) o Noviembre(11)
     private boolean esMesPermitido(LocalDateTime fecha) {
-        int mes = fecha.getMonthValue(); // 1=Enero, 2=Febrero...
-        
-        // Meses permitidos: Febrero(2), Mayo(5), Agosto(8), Noviembre(11)
+        int mes = fecha.getMonthValue();
         return mes == 2 || mes == 5 || mes == 8 || mes == 11;
     }
 
-    // ✅ Verificar si es día laboral (lunes a viernes)
     private boolean esDiaLaboral(LocalDateTime fecha) {
-        int diaSemana = fecha.getDayOfWeek().getValue(); // 1=Lunes, 7=Domingo
-        return diaSemana >= 1 && diaSemana <= 5; // Lunes a Viernes
+        int diaSemana = fecha.getDayOfWeek().getValue();
+        return diaSemana >= 1 && diaSemana <= 5;
     }
 
-    // Ver detalles (Todos autenticados)
     @GetMapping("/{seccion}/{tema}/ver/{id}")
     public String verTema(@PathVariable String seccion, @PathVariable String tema,
                           @PathVariable String id, Model model, RedirectAttributes ra, Authentication auth) {
-        // Verificar Acceso
         if (!tieneAccesoASeccion(seccion, auth)) {
-            return "redirect:/error?mensaje=Acceso denegado";
+            ra.addFlashAttribute("error", "Acceso denegado - No tienes acceso a esta sección");
+            return "redirect:/inicio";
         }
         Optional<Main> mainOpt = mainRepository.findById(id);
         if (mainOpt.isPresent()) {
@@ -294,14 +384,13 @@ public String perfil(Model model, Authentication auth) {
         return "redirect:/" + seccion + "/" + tema;
     }
 
-    // Formulario NUEVO elemento (🔒 SOLO ADMIN)
     @GetMapping("/{seccion}/{tema}/add")
-    public String addTema(@PathVariable String seccion, @PathVariable String tema, Model model, RedirectAttributes ra, Authentication auth) {
-        // Verificar Acceso
+    public String addTema(@PathVariable String seccion, @PathVariable String tema, 
+                          Model model, RedirectAttributes ra, Authentication auth) {
         if (!tieneAccesoASeccion(seccion, auth)) {
-            return "inicio";
+            ra.addFlashAttribute("error", "Acceso denegado - No tienes acceso a esta sección");
+            return "redirect:/inicio";
         }
-        // 🔒 SOLO ADMIN
         if(!esAdmin()) {
             ra.addFlashAttribute("error", "❌ Acceso denegado: Solo administradores");
             return "redirect:/" + seccion + "/" + tema;
@@ -310,6 +399,7 @@ public String perfil(Model model, Authentication auth) {
         try {
             Main main = new Main();
             main.setSeccion(seccion + "_" + tema);
+            main.setColorSeleccionado(null);
             model.addAttribute("main", main);
             model.addAttribute("accion", "Crear");
             model.addAttribute("seccionUrl", seccion);
@@ -322,15 +412,12 @@ public String perfil(Model model, Authentication auth) {
         }
     }
 
-    // Guardar elemento (🔒 SOLO ADMIN)
     @PostMapping("/{seccion}/{tema}/guardar")
     public String guardarTema(@PathVariable String seccion, @PathVariable String tema,
                               @ModelAttribute Main main, RedirectAttributes ra, Authentication auth) {
-        // Verificar Acceso
         if (!tieneAccesoASeccion(seccion, auth)) {
-            return "redirect:/error?mensaje=Acceso denegado";
+            return "redirect:/inicio";
         }
-        // 🔒 SOLO ADMIN
         if(!esAdmin()) {
             ra.addFlashAttribute("error", "❌ Acceso denegado");
             return "redirect:/" + seccion + "/" + tema;
@@ -346,15 +433,30 @@ public String perfil(Model model, Authentication auth) {
             }
 
             if (main.getFechaCreacion() == null) {
-                main.setFechaCreacion(LocalDateTime.now());
+                main.setFechaCreacion(LocalDateTime.now(ZONA_MEXICO));
+            }
+
+            if (main.getOrden() == null || main.getOrden() == 0) {
+                List<Main> existentes = mainRepository.findBySeccionOrderByOrdenAsc(coleccion);
+                int maxOrden = existentes.stream()
+                    .mapToInt(m -> m.getOrden() != null ? m.getOrden() : 0)
+                    .max()
+                    .orElse(0);
+                main.setOrden(maxOrden + 1);
             }
 
             if (main.getTitulo() == null || main.getTitulo().trim().isEmpty()) {
                 ra.addFlashAttribute("error", "⚠️ El título es obligatorio");
                 return "redirect:/" + seccion + "/" + tema + "/add";
             }
-            if (main.getPorcentaje() == null) {
-                main.setPorcentaje(0.0);
+            
+            main.setPorcentaje(formatearPorcentaje(main.getPorcentaje()));
+
+            if (main.getColorSeleccionado() != null && !main.getColorSeleccionado().isEmpty()) {
+                List<String> coloresValidos = Arrays.asList("verde", "amarillo", "rojo", "gris");
+                if (!coloresValidos.contains(main.getColorSeleccionado())) {
+                    main.setColorSeleccionado(null);
+                }
             }
 
             mainRepository.save(main);
@@ -365,15 +467,12 @@ public String perfil(Model model, Authentication auth) {
         return "redirect:/" + seccion + "/" + tema;
     }
 
-    // Editar elemento (🔒 SOLO ADMIN)
     @GetMapping("/{seccion}/{tema}/editar/{id}")
     public String editarTema(@PathVariable String seccion, @PathVariable String tema,
                              @PathVariable String id, Model model, RedirectAttributes ra, Authentication auth) {
-        // Verificar Acceso
         if (!tieneAccesoASeccion(seccion, auth)) {
-            return "redirect:/error?mensaje=Acceso denegado";
+            return "redirect:/inicio";
         }
-        // 🔒 SOLO ADMIN
         if(!esAdmin()) {
             ra.addFlashAttribute("error", "❌ Acceso denegado");
             return "redirect:/" + seccion + "/" + tema;
@@ -398,15 +497,13 @@ public String perfil(Model model, Authentication auth) {
         return "redirect:/" + seccion + "/" + tema;
     }
 
-    // Actualizar elemento (🔒 SOLO ADMIN)
     @PostMapping("/{seccion}/{tema}/actualizar/{id}")
     public String actualizarTema(@PathVariable String seccion, @PathVariable String tema,
-                                 @PathVariable String id, @ModelAttribute Main mainActualizado, RedirectAttributes ra, Authentication auth) {
-        // Verificar Acceso
+                                 @PathVariable String id, @ModelAttribute Main mainActualizado, 
+                                 RedirectAttributes ra, Authentication auth) {
         if (!tieneAccesoASeccion(seccion, auth)) {
-            return "redirect:/error?mensaje=Acceso denegado";
+            return "redirect:/inicio";
         }
-        // 🔒 SOLO ADMIN
         if(!esAdmin()) {
             ra.addFlashAttribute("error", "❌ Acceso denegado");
             return "redirect:/" + seccion + "/" + tema;
@@ -430,9 +527,22 @@ public String perfil(Model model, Authentication auth) {
                 main.setTitulo(mainActualizado.getTitulo().trim());
                 main.setPrograma(getNombreTema(tema));
                 main.setTiempo(mainActualizado.getTiempo() != null ? mainActualizado.getTiempo().trim() : "");
-                main.setPorcentaje(mainActualizado.getPorcentaje() != null ? mainActualizado.getPorcentaje() : 0.0);
-                main.setFechaUltimaEdicion(LocalDateTime.now());
-                main.setNotificacionEnviada(false); // Reiniciar el estado de notificación al actualizar
+                main.setPorcentaje(formatearPorcentaje(mainActualizado.getPorcentaje()));
+                main.setFechaUltimaEdicion(LocalDateTime.now(ZONA_MEXICO));
+                main.setNotificacionEnviada(false);
+                
+                if (mainActualizado.getColorSeleccionado() != null) {
+                    List<String> coloresValidos = Arrays.asList("verde", "amarillo", "rojo", "gris", "");
+                    if (coloresValidos.contains(mainActualizado.getColorSeleccionado())) {
+                        String color = mainActualizado.getColorSeleccionado().isEmpty() ? 
+                                      null : mainActualizado.getColorSeleccionado();
+                        main.setColorSeleccionado(color);
+                    }
+                }
+                
+                if (mainActualizado.getOrden() != null) {
+                    main.setOrden(mainActualizado.getOrden());
+                }
 
                 mainRepository.save(main);
                 ra.addFlashAttribute("mensaje", "✅ Actualizado correctamente");
@@ -445,30 +555,29 @@ public String perfil(Model model, Authentication auth) {
         return "redirect:/" + seccion + "/" + tema;
     }
 
-    // Eliminar elemento (🔒 SOLO ADMIN)
-    @PostMapping("/{seccion}/{tema}/eliminar/{id}")
+        @PostMapping("/{seccion}/{tema}/eliminar/{id}")
     public String eliminarTema(@PathVariable String seccion, @PathVariable String tema,
                                @PathVariable String id, RedirectAttributes ra, Authentication auth) {
-        // Verificar Acceso
         if (!tieneAccesoASeccion(seccion, auth)) {
-            return "redirect:/error?mensaje=Acceso denegado";
+            return "redirect:/inicio";
         }
-        // 🔒 SOLO ADMIN
         if(!esAdmin()) {
-            ra.addFlashAttribute("error", "❌ Acceso denegado");
+            ra.addFlashAttribute("error", "❌ Acceso denegado: Solo administradores pueden eliminar registros");
             return "redirect:/" + seccion + "/" + tema;
         }
 
         try {
             Optional<Main> mainOpt = mainRepository.findById(id);
             if (mainOpt.isPresent()) {
+                Main main = mainOpt.get();
                 String coleccionEsperada = seccion + "_" + tema;
-                if (coleccionEsperada.equals(mainOpt.get().getSeccion())) {
-                    mainRepository.deleteById(id);
-                    ra.addFlashAttribute("mensaje", "✅ Eliminado correctamente");
-                } else {
-                    ra.addFlashAttribute("error", "❌ No se puede eliminar este registro");
+                if (!coleccionEsperada.equals(main.getSeccion())) {
+                    ra.addFlashAttribute("error", "❌ El registro no pertenece a esta sección");
+                    return "redirect:/" + seccion + "/" + tema;
                 }
+
+                mainRepository.deleteById(id);
+                ra.addFlashAttribute("mensaje", "✅ Registro eliminado exitosamente");
             } else {
                 ra.addFlashAttribute("error", "❌ Registro no encontrado");
             }
@@ -478,7 +587,71 @@ public String perfil(Model model, Authentication auth) {
         return "redirect:/" + seccion + "/" + tema;
     }
 
-    // ==================== GRÁFICAS (Todos autenticados) ====================
+    // ==================== BÚSQUEDA EN JSON (PARA EL BUSCADOR GLOBAL) ====================
+    @GetMapping("/api/buscar")
+    @ResponseBody
+    public Map<String, Object> buscarJSON(@RequestParam String q, Authentication auth) {
+        Map<String, Object> respuesta = new HashMap<>();
+        List<Map<String, Object>> resultados = new ArrayList<>();
+        
+        try {
+            if (q == null || q.trim().isEmpty()) {
+                respuesta.put("success", false);
+                respuesta.put("mensaje", "Término de búsqueda vacío");
+                return respuesta;
+            }
+            
+            String termino = q.trim().toLowerCase();
+            List<Main> todos = mainRepository.findAll();
+            
+            for (Main item : todos) {
+                if (item.getSeccion() == null) continue;
+                
+                // Verificar acceso del usuario
+                String[] partesSeccion = item.getSeccion().split("_");
+                String seccion = partesSeccion.length > 0 ? partesSeccion[0] : "";
+                
+                if (!tieneAccesoASeccion(seccion, auth)) {
+                    continue;
+                }
+                
+                String titulo = item.getTitulo() != null ? item.getTitulo().toLowerCase() : "";
+                String programa = item.getPrograma() != null ? item.getPrograma().toLowerCase() : "";
+                String seccionLower = seccion.toLowerCase();
+                
+                // Buscar coincidencia
+                if (titulo.contains(termino) || programa.contains(termino) || seccionLower.contains(termino)) {
+                    Map<String, Object> dato = new HashMap<>();
+                    dato.put("id", item.getId());
+                    dato.put("titulo", item.getTitulo());
+                    dato.put("programa", item.getPrograma());
+                    dato.put("porcentaje", item.getPorcentaje());
+                    dato.put("colorSeleccionado", item.getColorSeleccionado());
+                    dato.put("seccionNombre", getNombreSeccion(seccion));
+                    
+                    // Construir URL
+                    String temaUrl = partesSeccion.length > 1 ? partesSeccion[1] : "";
+                    dato.put("url", "/" + seccion + "/" + temaUrl + "/ver/" + item.getId());
+                    
+                    resultados.add(dato);
+                }
+            }
+            
+            respuesta.put("success", true);
+            respuesta.put("resultados", resultados);
+            respuesta.put("total", resultados.size());
+            respuesta.put("termino", termino);
+            
+        } catch (Exception e) {
+            respuesta.put("success", false);
+            respuesta.put("mensaje", "Error en la búsqueda: " + e.getMessage());
+        }
+        
+        return respuesta;
+    }
+
+    // ==================== GRÁFICAS ====================
+   
     @GetMapping("/{seccion}/dashboard/grafica")
     public String graficaSeccion(@PathVariable String seccion, Model model, Authentication auth) {
         // Verificar Acceso
@@ -554,82 +727,32 @@ public String perfil(Model model, Authentication auth) {
         return datos;
     }
 
-    // ==================== MANEJO DE ERRORES ====================
-    @GetMapping("/error")
-    public String manejarError() {
-        return "redirect:/inicio";
-    }
-
-    // ==================== VERIFICAR EDICIÓN DISPONIBLE ====================
-
-@GetMapping("/{seccion}/{tema}/verificar-edicion/{id}")
-public String verificarEdicion(@PathVariable String seccion, @PathVariable String tema,
-                               @PathVariable String id, Model model, RedirectAttributes ra,
-                               Authentication auth) {
-    // Verificar Acceso
-    if (!tieneAccesoASeccion(seccion, auth)) {
-        return "redirect:/error?mensaje=Acceso denegado";
-    }
-    try {
-        Optional<Main> mainOpt = mainRepository.findById(id);
-        if (mainOpt.isPresent()) {
-            Main main = mainOpt.get();
-            boolean puedeEditar = calcularPuedeEditar(main);
-            
-            if (puedeEditar) {
-                // ✅ Verificar si ya se notificó
-                List<com.example.maquinawebmongo.model.Notificacion> notificacionesExistentes = 
-                    notificacionRepository.findByRegistroIdAndUsuarioId(id, auth.getName());
-                
-                if (notificacionesExistentes.isEmpty()) {
-                    // Enviar notificación
-                    String url = "/" + seccion + "/" + tema + "/editar/" + id;
-                    String titulo = main.getTitulo();
-                    notificacionService.notificarEdicionDisponible(id, titulo, url);
-                    ra.addFlashAttribute("mensaje", "✅ Notificación enviada por correo y en el sistema.");
-                } else {
-                    ra.addFlashAttribute("mensaje", "ℹ️ Ya se envió una notificación para este indicador.");
-                }
-            } else {
-                ra.addFlashAttribute("error", "⛔ El indicador aún no está disponible para edición.");
-            }
-        } else {
-            ra.addFlashAttribute("error", "❌ Registro no encontrado.");
-        }
-    } catch (Exception e) {
-        ra.addFlashAttribute("error", "❌ Error: " + e.getMessage());
-    }
-    return "redirect:/" + seccion + "/" + tema;
-}
-
-    // ==================== VERIFICAR ACCESO A SECCIÓN ====================
-
+    // ==================== MÉTODOS DE APOYO ====================
     private boolean tieneAccesoASeccion(String seccion, Authentication auth) {
+        if (esAdmin()) return true;
         if (auth == null) return false;
 
-        // 🔑 PRIMERO: Verificar si es ADMIN (directamente de Spring, NO de la BD)
-        boolean esAdmin = auth.getAuthorities().stream()
-            .anyMatch(g -> g.getAuthority().endsWith("ADMIN"));
+        String username = auth.getName();
+        Optional<Usuario> usuarioOpt = usuarioService.buscarPorUsername(username);
 
-        // ✅ Si es ADMIN: ACCESO TOTAL, NO revisamos nada más
-        if (esAdmin) {
-            System.out.println("✅ ADMIN detectado → Acceso concedido a: " + seccion);
-            return true;
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            String rol = usuario.getRol();
+            
+            if ("ROLE_ADMIN".equals(rol) || "ADMIN".equals(rol)) {
+                return true;
+            }
+            
+            List<String> seccionesAsignadas = usuario.getSeccionesAcceso();
+            if (seccionesAsignadas != null && seccionesAsignadas.contains(seccion)) {
+                return true;
+            }
         }
-
-        // 👤 SOLO si NO es ADMIN: revisamos sus secciones asignadas
-        System.out.println("ℹ️ Usuario normal, revisando acceso a sección: " + seccion);
-        return usuarioService.buscarPorUsername(auth.getName())
-            .map(usuario -> {
-                List<String> seccionesPermitidas = usuario.getSeccionesAcceso();
-                return seccionesPermitidas != null && seccionesPermitidas.contains(seccion);
-            })
-            .orElse(false);
+        return false;
     }
-    
-    // ==================== MÉTODOS AUXILIARES ====================
-    private String getNombreSeccion(String seccion) {
-        return switch (seccion) {
+
+    private String getNombreSeccion(String clave) {
+        return switch (clave) {
             case "presidencia" -> "Presidencia Municipal";
             case "sindicatura" -> "Sindicatura";
             case "regidores" -> "Regidores";
@@ -645,13 +768,7 @@ public String verificarEdicion(@PathVariable String seccion, @PathVariable Strin
             case "consejeria" -> "Consejería";
             case "dif" -> "DIF";
             case "sapac" -> "SAPAC";
-            default -> {
-                if (seccion.length() > 1) {
-                    yield seccion.substring(0, 1).toUpperCase() + seccion.substring(1);
-                } else {
-                    yield seccion.toUpperCase();
-                }
-            }
+            default -> clave.substring(0, 1).toUpperCase() + clave.substring(1);
         };
     }
 
@@ -671,7 +788,7 @@ public String verificarEdicion(@PathVariable String seccion, @PathVariable Strin
             case "austeridad-consciente" -> "Austeridad Consciente y Transparente de los Recursos y Servicios Públicos";
             case "austeridad-consciente-capitalizacion" -> "Austeridad Consciente en la Capitalización de Recursos Humanos";
             case "administracion-eficaz" -> "Administración Eficaz y Transparente de los Recursos Materiales";
-            case "administracion-eficiente" -> "Administración Eficiente y Transparente de los Recursos Públicos";
+            case "administracion-eficiente" -> "Administración Eficiente de los Recursos Tecnológicos";
             case "fortalecimiento-financiero" -> "Fortalecimiento Financiero para el Desarrollo Municipal";
             case "recaudacion-eficiente" -> "Recaudación Eficiente y Equitativa de los Ingresos";
             case "recaudacion-impuesto-predial" -> "Recaudación Eficiente del Impuesto Predial";

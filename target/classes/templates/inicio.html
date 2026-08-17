@@ -80,33 +80,6 @@
             transform: translateY(-2px);
         }
         
-        .footer {
-            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
-            border-top: 1px solid #dee2e6;
-            margin-top: 4rem;
-            padding: 2rem 0;
-        }
-        
-        .footer .text-muted {
-            color: rgba(255,255,255,0.7) !important;
-        }
-        
-        .footer strong {
-            color: white;
-        }
-        
-        .footer a {
-            color: rgba(255,255,255,0.7) !important;
-        }
-        
-        .footer a:hover {
-            color: white !important;
-        }
-        
-        .footer .text-body-tertiary {
-            color: rgba(255,255,255,0.8) !important;
-        }
-        
         .header-inicio {
             background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
             color: white;
@@ -126,6 +99,306 @@
             background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
             pointer-events: none;
         }
+
+        /* ============ ESTILOS DEL BUSCADOR ============ */
+        .buscador-container {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .buscador-container .input-group {
+            background: rgba(255,255,255,0.95);
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .buscador-container .input-group-text {
+            background: transparent;
+            border: none;
+            color: #6c757d;
+            padding-left: 20px;
+        }
+        
+        .buscador-container .form-control {
+            border: none;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            background: transparent;
+        }
+        
+        .buscador-container .form-control:focus {
+            box-shadow: none;
+            background: transparent;
+        }
+        
+        .buscador-container .form-control::placeholder {
+            color: #adb5bd;
+        }
+        
+        .buscador-container .btn-buscar {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 0 50px 50px 0;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+        
+        .buscador-container .btn-buscar:hover {
+            background: #0a58ca;
+        }
+        
+        .buscador-container .btn-limpiar {
+            background: transparent;
+            border: none;
+            color: #6c757d;
+            padding: 15px 10px;
+            display: none;
+            transition: color 0.3s ease;
+        }
+        
+        .buscador-container .btn-limpiar:hover {
+            color: #dc3545;
+        }
+        
+        .buscador-container .badge-resultados {
+            position: absolute;
+            right: 110px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e9ecef;
+            color: #495057;
+            font-size: 0.75rem;
+            padding: 2px 12px;
+            border-radius: 12px;
+            display: none;
+            z-index: 5;
+        }
+        
+        .buscador-container .badge-resultados.visible {
+            display: inline-block;
+        }
+
+        /* ============ RESULTADOS DE BÚSQUEDA ============ */
+        .resultados-container {
+            display: none;
+            margin-top: 1.5rem;
+            text-align: left;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .resultados-container.visible {
+            display: block;
+        }
+        
+        .resultado-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #0d6efd;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .resultado-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            background: white;
+        }
+        
+        .resultado-card .titulo {
+            font-weight: 600;
+            color: #212529;
+            font-size: 1.05rem;
+        }
+        
+        .resultado-card .programa {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .resultado-card .seccion-badge {
+            font-size: 0.7rem;
+            background: #e7f1ff;
+            color: #0d6efd;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+        
+        .resultado-card .color-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .resultado-card .porcentaje-badge {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .sin-resultados {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .sin-resultados i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .spinner-custom {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        .resultados-titulo {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .header-inicio {
+                padding: 1.5rem;
+            }
+            
+            .header-inicio h1 {
+                font-size: 1.8rem;
+            }
+            
+            .buscador-container .btn-buscar {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .buscador-container .form-control {
+                padding: 12px 15px;
+                font-size: 1rem;
+            }
+            
+            .resultado-card {
+                padding: 0.75rem 1rem;
+            }
+            
+            .resultado-card .titulo {
+                font-size: 0.95rem;
+            }
+        }
+        /* ========== ESTILOS DEL FOOTER ========== */
+        .footer {
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            color: #ffffff;
+            padding: 3rem 0 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-brand {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .footer-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.25s ease;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .footer-links li i {
+            margin-top: 0.15rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+
+        .footer-links li a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .footer {
+                padding: 2rem 0 1rem;
+            }
+            .row > div {
+                margin-bottom: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -140,10 +413,7 @@
                 </a>
                 
                 <div class="d-flex align-items-center">
-                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
-                        Usuario
-                    </span>
-
+                    
                     <div th:replace="~{fragmentos/notificaciones :: notificaciones}"></div>
                     
                     <div class="dropdown">
@@ -169,7 +439,7 @@
                                     <i class="bi bi-file-earmark-excel"></i> Reportes
                                 </a>
                             </li>
-                            <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                            <li th:if="${esAdmin}">
                                 <a class="dropdown-item" href="/admin/usuarios">
                                     <i class="bi bi-people-fill"></i> Administrar Usuarios
                                 </a>
@@ -184,6 +454,10 @@
                             </li>
                         </ul>
                     </div>
+                    
+                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
+                        Usuario
+                    </span>
                 </div>
             </div>
         </nav>
@@ -197,17 +471,49 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
-        <!-- ========== ENCABEZADO ========== -->
+        <!-- ========== ENCABEZADO CON BUSCADOR ========== -->
         <div class="header-inicio mb-5 text-center">
             <i class="bi bi-building fs-1 d-inline-block mb-2"></i>
             <h1 class="display-5 fw-bold">Cuernavaca Gobierno Municipal</h1>
-            <p class="lead mb-0">Seleccione el módulo o sección que desea consultar</p>
+            <p class="lead mb-3">Seleccione el módulo o sección que desea consultar</p>
+            
             <div class="mt-3">
                 <span class="badge bg-light text-dark px-3 py-2">
                     <i class="bi bi-grid-3x3-gap-fill"></i> 15 Módulos disponibles
                 </span>
             </div>
-            
+
+            <!-- ============ BUSCADOR GENERAL ============ -->
+            <div class="buscador-container mt-4">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" id="buscadorGlobal" 
+                           class="form-control" 
+                           placeholder="🔍 Buscar indicador por título, programa o sección..."
+                           autocomplete="off">
+                    <button class="btn-limpiar" type="button" id="btnLimpiarBusqueda">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                    <span class="badge-resultados" id="badgeResultados">
+                        <span id="numResultados">0</span>
+                    </span>
+                    <button class="btn-buscar" type="button" id="btnBuscar">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+                <div class="text-start mt-2">
+                    <small class="text-white-50">
+                        <i class="bi bi-info-circle"></i> Busca por título, programa o sección (ej: seguridad, obras, DIF)
+                    </small>
+                </div>
+                
+                <!-- Contenedor de resultados -->
+                <div class="resultados-container" id="resultadosContainer">
+                    <div id="resultadosLista"></div>
+                </div>
+            </div>
         </div>
 
         <!-- ========== MÓDULOS ========== -->
@@ -411,36 +717,224 @@
     </div>
 
     <!-- ========== FOOTER ========== -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <i class="bi bi-building text-body-tertiary"></i>
-                    <strong>OmniView - Presidencia Municipal</strong>
-                    <p class="text-muted small mt-2">Plataforma integral para el seguimiento y evaluación de programas municipales</p>
-                </div>
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <small class="text-muted d-block">
-                        <i class="bi bi-envelope"></i> soporte@omniview.gob
-                    </small>
-                    <small class="text-muted d-block mt-1">
-                        <i class="bi bi-telephone"></i> (777) 123-4567
-                    </small>
-                </div>
-                <div class="col-md-3">
-                    <small class="text-muted">
-                        <i class="bi bi-calendar"></i> © 2026 - Todos los derechos reservados
-                    </small>
-                    <div class="mt-1">
-                        <a href="#" class="text-decoration-none text-muted small me-2">Aviso de privacidad</a>
-                        <a href="#" class="text-decoration-none text-muted small">Términos de uso</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <div th:replace="~{fragmentos/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/notificaciones.js}"></script>
+    <script>
+        (function() {
+            'use strict';
+            
+            console.log('🚀 Inicializando buscador global...');
+
+            // ==================== ELEMENTOS ====================
+            const inputBusqueda = document.getElementById('buscadorGlobal');
+            const btnBuscar = document.getElementById('btnBuscar');
+            const btnLimpiar = document.getElementById('btnLimpiarBusqueda');
+            const badgeResultados = document.getElementById('badgeResultados');
+            const numResultados = document.getElementById('numResultados');
+            const resultadosContainer = document.getElementById('resultadosContainer');
+            const resultadosLista = document.getElementById('resultadosLista');
+
+            if (!inputBusqueda) {
+                console.warn('❌ No se encontró el input de búsqueda');
+                return;
+            }
+
+            // ==================== FUNCIONES ====================
+            function getColorClass(color) {
+                if (!color) return 'bg-secondary';
+                switch(color) {
+                    case 'verde': return 'bg-success';
+                    case 'amarillo': return 'bg-warning';
+                    case 'rojo': return 'bg-danger';
+                    case 'gris': return 'bg-secondary';
+                    default: return 'bg-secondary';
+                }
+            }
+
+            function getColorText(color) {
+                if (!color) return 'Sin color';
+                switch(color) {
+                    case 'verde': return 'Aceptable';
+                    case 'amarillo': return 'En riesgo';
+                    case 'rojo': return 'Crítico';
+                    case 'gris': return 'Fallo en planeación';
+                    default: return 'Sin color';
+                }
+            }
+
+            function getColorIcon(color) {
+                if (!color) return 'bi-circle text-secondary';
+                switch(color) {
+                    case 'verde': return 'bi-circle-fill text-success';
+                    case 'amarillo': return 'bi-circle-fill text-warning';
+                    case 'rojo': return 'bi-circle-fill text-danger';
+                    case 'gris': return 'bi-circle-fill text-secondary';
+                    default: return 'bi-circle text-secondary';
+                }
+            }
+
+            function mostrarResultados(data) {
+                const resultados = data.resultados || [];
+                const termino = data.termino || '';
+                
+                // Actualizar badge
+                badgeResultados.classList.add('visible');
+                numResultados.textContent = resultados.length;
+                
+                // Mostrar contenedor
+                resultadosContainer.classList.add('visible');
+                
+                if (resultados.length === 0) {
+                    resultadosLista.innerHTML = `
+                        <div class="sin-resultados">
+                            <i class="bi bi-search"></i>
+                            <h5>No se encontraron resultados</h5>
+                            <p>No hay indicadores que coincidan con <strong>"${termino}"</strong></p>
+                            <small>Intenta con otra palabra clave</small>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = `
+                    <div class="resultados-titulo">
+                        <i class="bi bi-list-ul"></i> Mostrando ${resultados.length} resultados para: <strong>"${termino}"</strong>
+                    </div>
+                `;
+                
+                resultados.forEach(item => {
+                    const colorClass = getColorClass(item.colorSeleccionado);
+                    const colorText = getColorText(item.colorSeleccionado);
+                    const colorIcon = getColorIcon(item.colorSeleccionado);
+                    const porcentaje = item.porcentaje != null ? item.porcentaje.toFixed(2) : '0.00';
+                    
+                    html += `
+                        <a href="${item.url}" class="resultado-card">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center">
+                                <div class="flex-grow-1 me-2">
+                                    <div class="titulo">
+                                        <i class="bi ${colorIcon}" style="font-size: 1.2rem;"></i>
+                                        ${item.titulo || 'Sin título'}
+                                    </div>
+                                    <div class="programa">
+                                        <i class="bi bi-folder"></i> ${item.programa || 'Sin programa'}
+                                        <span class="seccion-badge ms-2">
+                                            <i class="bi bi-building"></i> ${item.seccionNombre || item.seccion}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="porcentaje-badge">
+                                        ${porcentaje}%
+                                    </span>
+                                    <br>
+                                    <span class="badge ${colorClass}">${colorText}</span>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                });
+                
+                resultadosLista.innerHTML = html;
+            }
+
+            function mostrarLoading() {
+                resultadosContainer.classList.add('visible');
+                badgeResultados.classList.add('visible');
+                numResultados.textContent = '...';
+                
+                resultadosLista.innerHTML = `
+                    <div class="sin-resultados">
+                        <div class="spinner-border text-light spinner-custom" role="status">
+                            <span class="visually-hidden">Buscando...</span>
+                        </div>
+                        <p class="mt-2">Buscando indicadores...</p>
+                    </div>
+                `;
+            }
+
+            function realizarBusqueda() {
+                const termino = inputBusqueda.value.trim();
+                
+                if (!termino) {
+                    resultadosContainer.classList.remove('visible');
+                    badgeResultados.classList.remove('visible');
+                    btnLimpiar.style.display = 'none';
+                    return;
+                }
+
+                btnLimpiar.style.display = 'block';
+                mostrarLoading();
+
+                fetch(`/api/buscar?q=${encodeURIComponent(termino)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            mostrarResultados(data);
+                        } else {
+                            resultadosLista.innerHTML = `
+                                <div class="sin-resultados">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <h5>Error en la búsqueda</h5>
+                                    <p>${data.mensaje || 'Error desconocido'}</p>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        resultadosLista.innerHTML = `
+                            <div class="sin-resultados">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <h5>Error de conexión</h5>
+                                <p>No se pudo completar la búsqueda. Intenta nuevamente.</p>
+                            </div>
+                        `;
+                    });
+            }
+
+            // ==================== EVENTOS ====================
+            btnBuscar.addEventListener('click', realizarBusqueda);
+            
+            inputBusqueda.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    realizarBusqueda();
+                }
+            });
+
+            inputBusqueda.addEventListener('input', function() {
+                const termino = this.value.trim();
+                if (!termino) {
+                    resultadosContainer.classList.remove('visible');
+                    badgeResultados.classList.remove('visible');
+                    btnLimpiar.style.display = 'none';
+                } else {
+                    btnLimpiar.style.display = 'block';
+                }
+            });
+
+            btnLimpiar.addEventListener('click', function() {
+                inputBusqueda.value = '';
+                resultadosContainer.classList.remove('visible');
+                badgeResultados.classList.remove('visible');
+                this.style.display = 'none';
+                inputBusqueda.focus();
+            });
+
+            // ==================== BUSCAR DESDE URL ====================
+            const urlParams = new URLSearchParams(window.location.search);
+            const q = urlParams.get('q');
+            if (q) {
+                inputBusqueda.value = q;
+                setTimeout(realizarBusqueda, 500);
+            }
+
+            console.log('✅ Buscador global inicializado');
+
+        })();
+    </script>
 </body>
 </html>

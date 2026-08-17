@@ -30,114 +30,125 @@
             transform: translateY(-2px);
         }
         
-        .semaforo-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 8px;
-            transition: background 0.2s ease;
-        }
-        
-        .semaforo-container:hover {
-            background: #f1f3f5;
-        }
-        
-        .semaforo-icono {
-            transition: transform 0.2s;
-            font-size: 1.5rem;
-        }
-        
-        .semaforo-icono:hover {
-            transform: scale(1.15);
-        }
-        
-        .semaforo-texto {
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        .semaforo-menu {
-            display: none;
-            position: fixed;
-            background: white;
-            border-radius: 14px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-            padding: 16px;
-            z-index: 9999;
-            min-width: 240px;
-            text-align: center;
-            border: 1px solid #e9ecef;
-            animation: fadeIn 0.2s ease;
-        }
-        
-        .semaforo-menu.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .color-option {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: inline-block;
-            margin: 4px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 3px solid #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-        
-        .color-option:hover {
-            transform: scale(1.15);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        }
-        
-        .color-label {
-            font-size: 0.7rem;
-            display: block;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-        
-        .color-item {
-            display: inline-block;
-            margin: 0 5px;
-            text-align: center;
-            cursor: pointer;
-        }
-        
-        .color-item:hover .color-label {
-            color: #0d6efd !important;
-        }
-        
+        /* NAVBAR CON BUSCADOR */
         .navbar-custom {
             background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 0.75rem 1.5rem;
         }
         
-        .btn-volver {
+        .navbar-custom .navbar-brand {
+            color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        
+        .navbar-custom .navbar-brand i {
+            font-size: 1.5rem;
+        }
+        
+        .navbar-buscador {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+            margin: 0 15px;
+        }
+        
+        .navbar-buscador .input-group {
+            background: rgba(255,255,255,0.15);
+            border-radius: 25px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .navbar-buscador .input-group:focus-within {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+        
+        .navbar-buscador .input-group-text {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            padding: 0.375rem 0.75rem 0.375rem 1rem;
+        }
+        
+        .navbar-buscador .form-control {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .navbar-buscador .form-control::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .navbar-buscador .form-control:focus {
+            box-shadow: none;
+            background: transparent;
+        }
+        
+        .navbar-buscador .btn-limpiar-busqueda {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            padding: 0.375rem 1rem 0.375rem 0.5rem;
+            transition: color 0.2s;
+            display: none;
+        }
+        
+        .navbar-buscador .btn-limpiar-busqueda:hover {
+            color: white;
+        }
+        
+        .navbar-buscador .badge-resultados {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
             background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
             color: white;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: none;
         }
         
-        .btn-volver:hover {
-            background: rgba(255,255,255,0.3);
+        .navbar-buscador .badge-resultados.visible {
+            display: inline-block;
+        }
+        
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navbar-user .user-name {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+        }
+        
+        .navbar-user .btn-user {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
             color: white;
-            transform: translateY(-2px);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-user .btn-user:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
         }
         
         .dropdown-user {
@@ -145,6 +156,7 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             border: none;
             padding: 0;
+            min-width: 220px;
         }
         
         .user-info {
@@ -204,61 +216,100 @@
             font-weight: 500;
         }
         
-        [data-tooltip] {
-            position: relative;
-            cursor: help;
-        }
-        
-        [data-tooltip]:before {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2c3e50;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            display: none;
-            z-index: 10;
-            margin-bottom: 5px;
-        }
-        
-        [data-tooltip]:hover:before {
-            display: block;
-        }
-        
         .progress-bar-verde { background-color: #28a745; }
         .progress-bar-amarillo { background-color: #ffc107; }
         .progress-bar-rojo { background-color: #dc3545; }
         
+        /* ========== ESTILOS DEL FOOTER ========== */
         .footer {
             background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
-            border-top: 1px solid #dee2e6;
+            color: #ffffff;
+            padding: 3rem 0 1.5rem;
             margin-top: 4rem;
-            padding: 2rem 0;
         }
-        
-        .footer .text-muted {
-            color: rgba(255,255,255,0.7) !important;
+
+        .footer-brand {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
         }
-        
-        .footer strong {
-            color: white;
+
+        .footer-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
         }
-        
-        .footer a {
-            color: rgba(255,255,255,0.7) !important;
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
         }
-        
-        .footer a:hover {
-            color: white !important;
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.25s ease;
         }
-        
-        .footer .text-body-tertiary {
-            color: rgba(255,255,255,0.8) !important;
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .footer-links li i {
+            margin-top: 0.15rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+
+        .footer-links li a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
         }
         
         .table tbody tr {
@@ -268,30 +319,80 @@
         .table tbody tr:hover {
             background: #f8f9fa;
         }
+        
+        .orden-badge {
+            font-size: 0.7rem;
+            background: #e9ecef;
+            color: #6c757d;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        /* Estilo para el semáforo en la tabla (solo lectura) */
+        .semaforo-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .semaforo-display .badge {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-buscador {
+                max-width: 100%;
+                margin: 10px 0;
+                order: 3;
+                flex-basis: 100%;
+            }
+            
+            .navbar-custom .navbar-brand {
+                font-size: 1rem;
+            }
+            
+            .navbar-user .user-name {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container my-4">
 
-        <!-- NAVBAR -->
-        <nav class="navbar navbar-dark navbar-custom mb-4 p-3">
+        <!-- NAVBAR CON BUSCADOR -->
+        <nav class="navbar navbar-dark navbar-custom mb-4">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/inicio">
                     <i class="bi bi-eye fs-4"></i>
-                    <strong>OmniView</strong> - Gobierno Municipal
+                    <strong>OmniView</strong> <span class="d-none d-sm-inline">- Gobierno Municipal</span>
                 </a>
                 
-                <div class="d-flex align-items-center">
-                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
-                        Usuario
-                    </span>
-                    
+                <!-- BUSCADOR EN EL NAVBAR -->
+                <div class="navbar-buscador">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="buscadorIndicadores" 
+                               class="form-control" 
+                               placeholder="Buscar indicador..."
+                               autocomplete="off">
+                        <button class="btn-limpiar-busqueda" type="button" id="btnLimpiarBusqueda">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                        <span class="badge-resultados" id="badgeResultados">
+                            <span id="numMostrados">0</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="navbar-user">
+                    <div th:replace="~{fragmentos/notificaciones :: notificaciones}"></div>
                     <div class="dropdown">
-                        <button class="btn btn-light rounded-circle d-flex align-items-center justify-content-center" 
-                                style="width: 40px; height: 40px;" 
-                                data-bs-toggle="dropdown" 
-                                aria-expanded="false">
-                            <i class="bi bi-person-circle fs-4"></i>
+                        <button class="btn-user" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-user">
                             <li class="user-info">
@@ -324,17 +425,12 @@
                             </li>
                         </ul>
                     </div>
+                    <span class="user-name d-none d-md-block" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
+                        Usuario
+                    </span>
                 </div>
             </div>
         </nav>
-
-        <!-- Botón para solicitar notificación de edición -->
-        <a th:if="${esAdmin and item != null and !item.puedeEditar}" 
-        th:href="@{/{seccionUrl}/{temaUrl}/verificar-edicion/{id} (seccionUrl=${seccionUrl}, temaUrl=${temaUrl}, id=${item.id})}" 
-        class="btn btn-sm btn-outline-warning" 
-        title="Notificar cuando esté disponible">
-            <i class="bi bi-bell"></i>
-        </a>
 
         <!-- BREADCRUMB -->
         <nav class="breadcrumb-custom">
@@ -359,7 +455,7 @@
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
             <div class="d-flex align-items-center gap-3">
                 <h2 class="h4 mb-0 text-primary" th:text="${tituloPagina}">Título del Tema</h2>
-                <span class="badge-total" th:text="'Total: ' + ${#lists.size(mainList)}">
+                <span class="badge-total" id="totalRegistros" th:text="'Total: ' + ${#lists.size(mainList)}">
                     Total: 0
                 </span>
             </div>
@@ -388,9 +484,10 @@
         <!-- Tabla -->
         <div class="table-container">
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover align-middle" id="tablaIndicadores">
                     <thead class="table-light">
                         <tr>
+                            <th>#</th>
                             <th>Título / Nombre</th>
                             <th>Programa / Área Responsable</th>
                             <th>Periódicamente</th>
@@ -399,14 +496,17 @@
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Se agregaron los atributos data-* para el control de periodo -->
+                    <tbody id="tablaBody">
                         <tr th:each="item : ${mainList}" 
                             class="registro-item"
                             th:data-id="${item.id}"
                             th:data-fecha-creacion="${item.fechaCreacion}"
                             th:data-fecha-ultima-edicion="${item.fechaUltimaEdicion}"
                             th:data-tiempo="${item.tiempo}">
+                            
+                            <td>
+                                <span class="orden-badge" th:text="${item.orden != null ? item.orden : '—'}">1</span>
+                            </td>
                             
                             <td>
                                 <strong th:text="${item.titulo}">Nombre</strong>
@@ -427,24 +527,54 @@
                                 </div>
                             </td>
                             
-                            <!-- Columna del SEMÁFORO (sin cambios) -->
+                            <!-- Columna del SEMÁFORO - SOLO LECTURA -->
                             <td>
-                                <div class="semaforo-container" th:data-id="${item.id}" data-tooltip="Haz clic para cambiar el estado">
-                                    <i class="bi bi-circle-fill text-secondary semaforo-icono" 
-                                    th:data-id="${item.id}"
-                                    style="font-size: 1.5rem;"></i>
-                                    <span class="semaforo-texto text-secondary">Seleccionar</span>
+                                <div class="semaforo-display" th:data-id="${item.id}">
+                                    <span th:if="${item.colorSeleccionado != null}">
+                                        <i class="bi bi-circle-fill" 
+                                        th:classappend="${item.colorSeleccionado == 'verde' ? 'text-success' : 
+                                                        item.colorSeleccionado == 'amarillo' ? 'text-warning' : 
+                                                        item.colorSeleccionado == 'rojo' ? 'text-danger' : 
+                                                        item.colorSeleccionado == 'gris' ? 'text-secondary' : 'text-secondary'}"
+                                        style="font-size: 1.5rem;">
+                                        </i>
+                                        <span class="badge" 
+                                            th:classappend="${item.colorSeleccionado == 'verde' ? 'bg-success' : 
+                                                            item.colorSeleccionado == 'amarillo' ? 'bg-warning text-dark' : 
+                                                            item.colorSeleccionado == 'rojo' ? 'bg-danger' : 
+                                                            item.colorSeleccionado == 'gris' ? 'bg-secondary' : 'bg-secondary'}">
+                                            <span th:if="${item.colorSeleccionado == 'verde'}">Aceptable</span>
+                                            <span th:if="${item.colorSeleccionado == 'amarillo'}">En riesgo</span>
+                                            <span th:if="${item.colorSeleccionado == 'rojo'}">Crítico</span>
+                                            <span th:if="${item.colorSeleccionado == 'gris'}">Fallo en planeación</span>
+                                        </span>
+                                    </span>
+                                    <span th:if="${item.colorSeleccionado == null}" class="text-muted">
+                                        <i class="bi bi-circle" style="font-size: 1.5rem;"></i>
+                                        <span class="badge bg-secondary">Sin color</span>
+                                    </span>
                                 </div>
                             </td>
                             
                             <td class="text-center">
-                                <!-- Botón Ver detalles -->
+                                <div th:if="${esAdmin}" class="btn-group-vertical me-1" style="vertical-align: middle;">
+                                    <button class="btn btn-sm btn-outline-secondary btn-mover-arriba" 
+                                            title="Mover arriba" 
+                                            style="padding: 2px 6px; border-radius: 4px 4px 0 0;">
+                                        <i class="bi bi-chevron-up"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary btn-mover-abajo" 
+                                            title="Mover abajo" 
+                                            style="padding: 2px 6px; border-radius: 0 0 4px 4px;">
+                                        <i class="bi bi-chevron-down"></i>
+                                    </button>
+                                </div>
+                                
                                 <a th:href="@{'/' + ${seccionUrl} + '/' + ${temaUrl} + '/ver/' + ${item.id}}" 
                                 class="btn btn-sm btn-outline-info me-1" title="Ver detalles">
                                     <i class="bi bi-eye"></i>
                                 </a>
 
-                                <!-- Botón Editar ACTIVO (se muestra cuando puede editar) -->
                                 <a th:if="${esAdmin}" 
                                 th:href="@{/{seccionUrl}/{temaUrl}/editar/{id} (seccionUrl=${seccionUrl}, temaUrl=${temaUrl}, id=${item.id})}" 
                                 class="btn btn-sm btn-outline-primary me-1 btn-editar"
@@ -452,14 +582,12 @@
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
-                                <!-- Botón Editar DESACTIVADO (se muestra cuando NO puede editar) -->
                                 <span th:if="${esAdmin}" 
                                     class="btn btn-sm btn-outline-secondary me-1 disabled btn-editar-disabled"
                                     style="display: inline-block;">
                                     <i class="bi bi-pencil"></i>
                                 </span>
                                 
-                                <!-- Botón Eliminar -->
                                 <form th:if="${esAdmin}"
                                     th:action="@{'/' + ${seccionUrl} + '/' + ${temaUrl} + '/eliminar/' + ${item.id}}" 
                                     method="post" class="d-inline" 
@@ -471,7 +599,7 @@
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(mainList)}">
-                            <td colspan="6" class="text-center text-muted py-5">
+                            <td colspan="7" class="text-center text-muted py-5">
                                 <i class="bi bi-inbox" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
                                 <p class="mb-0">No hay registros disponibles.</p>
                                 <p class="small">Haz clic en "Nuevo Registro" para comenzar</p>
@@ -483,291 +611,278 @@
         </div>
 
     </div>
-    
-    <!-- Menú flotante del semáforo (sin cambios) -->
-    <div id="semaforoMenu" class="semaforo-menu">
-        <div class="text-center mb-2">
-            <strong><i class="bi bi-circle"></i> Seleccione un estado:</strong>
-        </div>
-        <div>
-            <div class="color-item" data-color="verde" data-texto="Aceptable">
-                <div class="color-option" style="background-color: #28a745;"></div>
-                <span class="color-label text-success">Aceptable</span>
-            </div>
-            <div class="color-item" data-color="amarillo" data-texto="En riesgo">
-                <div class="color-option" style="background-color: #ffc107;"></div>
-                <span class="color-label text-warning">En riesgo</span>
-            </div>
-            <div class="color-item" data-color="rojo" data-texto="Crítico">
-                <div class="color-option" style="background-color: #dc3545;"></div>
-                <span class="color-label text-danger">Crítico</span>
-            </div>
-            <div class="color-item" data-color="gris" data-texto="Fallo en planeación">
-                <div class="color-option" style="background-color: #6c757d;"></div>
-                <span class="color-label text-secondary">Fallo en planeación</span>
-            </div>
-        </div>
-    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <i class="bi bi-building text-body-tertiary"></i>
-                    <strong>OmniView - Presidencia Municipal</strong>
-                    <p class="text-muted small mt-2">Plataforma integral para el seguimiento y evaluación de programas municipales</p>
-                </div>
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <small class="text-muted d-block">
-                        <i class="bi bi-envelope"></i> soporte@omniview.gob
-                    </small>
-                    <small class="text-muted d-block mt-1">
-                        <i class="bi bi-telephone"></i> (777) 123-4567
-                    </small>
-                </div>
-                <div class="col-md-3">
-                    <small class="text-muted">
-                        <i class="bi bi-calendar"></i> © 2026 - Todos los derechos reservados
-                    </small>
-                    <div class="mt-1">
-                        <a href="#" class="text-decoration-none text-muted small me-2">Aviso de privacidad</a>
-                        <a href="#" class="text-decoration-none text-muted small">Términos de uso</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+        <!-- Footer -->
+    <div th:replace="~{fragmentos/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ==================== SEMÁFORO (sin cambios) ====================
-        let currentContainer = null;
-        let currentId = null;
-        const menu = document.getElementById('semaforoMenu');
-        
-        document.querySelectorAll('.semaforo-container').forEach(container => {
-            container.addEventListener('click', function(event) {
-                event.stopPropagation();
-                currentContainer = this;
-                currentId = this.getAttribute('data-id');
+        (function() {
+            'use strict';
+            
+            console.log('🚀 Inicializando página...');
+
+            function verificarPuedeEditar(fechaCreacion, fechaUltimaEdicion, tiempo) {
+                if (!fechaCreacion || !tiempo) return false;
                 
-                const rect = this.getBoundingClientRect();
-                menu.style.left = (rect.left + window.scrollX) + 'px';
-                menu.style.top = (rect.bottom + window.scrollY + 5) + 'px';
-                menu.classList.add('active');
-            });
-        });
-        
-        function cambiarColorSemaforo(id, color, texto) {
-            if (!currentContainer) return;
-            
-            const icono = currentContainer.querySelector('.semaforo-icono');
-            const textoElement = currentContainer.querySelector('.semaforo-texto');
-            
-            let iconoClass = '';
-            let textColor = '';
-            switch(color) {
-                case 'verde': 
-                    iconoClass = 'bi bi-circle-fill text-success'; 
-                    textColor = 'text-success';
-                    break;
-                case 'amarillo': 
-                    iconoClass = 'bi bi-circle-fill text-warning'; 
-                    textColor = 'text-warning';
-                    break;
-                case 'rojo': 
-                    iconoClass = 'bi bi-circle-fill text-danger'; 
-                    textColor = 'text-danger';
-                    break;
-                case 'gris': 
-                    iconoClass = 'bi bi-circle-fill text-secondary'; 
-                    textColor = 'text-secondary';
-                    break;
-                default: 
-                    iconoClass = 'bi bi-circle-fill text-secondary';
-                    textColor = 'text-secondary';
-            }
-            
-            if (icono) icono.className = iconoClass + ' semaforo-icono';
-            if (textoElement) {
-                textoElement.className = 'semaforo-texto ' + textColor;
-                textoElement.textContent = texto;
-            }
-            
-            let coloresGuardados = JSON.parse(localStorage.getItem('coloresSemaforo') || '{}');
-            coloresGuardados[id] = { color: color, texto: texto };
-            localStorage.setItem('coloresSemaforo', JSON.stringify(coloresGuardados));
-            
-            menu.classList.remove('active');
-            currentContainer = null;
-            currentId = null;
-        }
-        
-        document.querySelectorAll('.color-item').forEach(item => {
-            item.addEventListener('click', function() {
-                if (currentId) {
-                    const color = this.getAttribute('data-color');
-                    const texto = this.getAttribute('data-texto');
-                    cambiarColorSemaforo(currentId, color, texto);
-                }
-            });
-        });
-        
-        document.addEventListener('click', function(event) {
-            if (!menu.contains(event.target) && !event.target.closest('.semaforo-container')) {
-                menu.classList.remove('active');
-                currentContainer = null;
-                currentId = null;
-            }
-        });
-        
-        function cargarColoresGuardados() {
-            const coloresGuardados = JSON.parse(localStorage.getItem('coloresSemaforo') || '{}');
-            document.querySelectorAll('.semaforo-container').forEach(container => {
-                const id = container.getAttribute('data-id');
-                const data = coloresGuardados[id];
-                if (data) {
-                    const icono = container.querySelector('.semaforo-icono');
-                    const textoElement = container.querySelector('.semaforo-texto');
-                    
-                    let iconoClass = '';
-                    let textColor = '';
-                    switch(data.color) {
-                        case 'verde': 
-                            iconoClass = 'bi bi-circle-fill text-success'; 
-                            textColor = 'text-success';
-                            break;
-                        case 'amarillo': 
-                            iconoClass = 'bi bi-circle-fill text-warning'; 
-                            textColor = 'text-warning';
-                            break;
-                        case 'rojo': 
-                            iconoClass = 'bi bi-circle-fill text-danger'; 
-                            textColor = 'text-danger';
-                            break;
-                        case 'gris': 
-                            iconoClass = 'bi bi-circle-fill text-secondary'; 
-                            textColor = 'text-secondary';
-                            break;
-                        default: 
-                            iconoClass = 'bi bi-circle-fill text-secondary';
-                            textColor = 'text-secondary';
-                    }
-                    if (icono) icono.className = iconoClass + ' semaforo-icono';
-                    if (textoElement) {
-                        textoElement.className = 'semaforo-texto ' + textColor;
-                        textoElement.textContent = data.texto;
-                    }
-                }
-            });
-        }
-
-        // ==================== CONTROL DE EDICIÓN POR PERIODO (NUEVO) ====================
-       function verificarPuedeEditar(fechaCreacion, fechaUltimaEdicion, tiempo) {
-            if (!fechaCreacion || !tiempo) return false;
-            
-            const fechaBase = fechaUltimaEdicion || fechaCreacion;
-            const ahora = new Date().getTime();
-            const diffMs = ahora - fechaBase;
-            const diffDias = diffMs / (1000 * 60 * 60 * 24);
-            
-            // ✅ Devuelve true cuando el periodo HA PASADO (disponible para editar)
-            switch(tiempo) {
-                case 'Minuto': return diffMs >= 60 * 1000;
-                case 'Hora': return diffMs >= 60 * 60 * 1000;
-                case 'Diario': return diffDias >= 1;
-                case 'Semanal': return diffDias >= 7;
-                case 'Quincenal': return diffDias >= 15;
-                case 'Mensual': return diffDias >= 30;
-                case 'Bimestral': return diffDias >= 60;
-                case 'Trimestral': return diffDias >= 90;
-                case 'Cuatrimestral': return diffDias >= 120;
-                case 'Semestral': return diffDias >= 180;
-                case 'Anual': return diffDias >= 365;
-                default: return false;
-            }
-        }
-
-        function obtenerTiempoRestante(fechaCreacion, fechaUltimaEdicion, tiempo) {
-            const fechaBase = fechaUltimaEdicion || fechaCreacion;
-            const ahora = new Date().getTime();
-            const diffMs = ahora - fechaBase;
-            let periodoMs = 0;
-            
-            switch(tiempo) {
-                case 'Minuto': periodoMs = 60 * 1000; break;
-                case 'Hora': periodoMs = 60 * 60 * 1000; break;
-                case 'Diario': periodoMs = 24 * 60 * 60 * 1000; break;
-                case 'Semanal': periodoMs = 7 * 24 * 60 * 60 * 1000; break;
-                case 'Quincenal': periodoMs = 15 * 24 * 60 * 60 * 1000; break;
-                case 'Mensual': periodoMs = 30 * 24 * 60 * 60 * 1000; break;
-                case 'Bimestral': periodoMs = 60 * 24 * 60 * 60 * 1000; break;
-                case 'Trimestral': periodoMs = 90 * 24 * 60 * 60 * 1000; break;
-                case 'Cuatrimestral': periodoMs = 120 * 24 * 60 * 60 * 1000; break;
-                case 'Semestral': periodoMs = 180 * 24 * 60 * 60 * 1000; break;
-                case 'Anual': periodoMs = 365 * 24 * 60 * 60 * 1000; break;
-                default: return '';
-            }
-            
-            const restante = periodoMs - diffMs;
-            if (restante <= 0) return '¡Disponible ahora!';
-            
-            const segundos = Math.floor(restante / 1000);
-            const minutos = Math.floor(segundos / 60);
-            const horas = Math.floor(minutos / 60);
-            const dias = Math.floor(horas / 24);
-            
-            if (dias > 0) return dias + ' día' + (dias > 1 ? 's' : '');
-            if (horas > 0) return horas + ' hora' + (horas > 1 ? 's' : '');
-            if (minutos > 0) return minutos + ' minuto' + (minutos > 1 ? 's' : '');
-            return segundos + ' segundo' + (segundos > 1 ? 's' : '');
-        }
-
-        function actualizarBotonesEditar() {
-            document.querySelectorAll('.registro-item').forEach(item => {
-                const fechaCreacion = parseInt(item.getAttribute('data-fecha-creacion')) || 0;
-                const fechaUltimaEdicion = parseInt(item.getAttribute('data-fecha-ultima-edicion')) || 0;
-                const tiempo = item.getAttribute('data-tiempo');
+                const fechaBase = fechaUltimaEdicion || fechaCreacion;
+                const ahora = new Date().getTime();
+                const diffMs = ahora - fechaBase;
+                const diffDias = diffMs / (1000 * 60 * 60 * 24);
                 
-                if (!tiempo || tiempo === '') {
-                    const btnEditar = item.querySelector('.btn-editar');
-                    const btnDisabled = item.querySelector('.btn-editar-disabled');
-                    if (btnEditar) btnEditar.style.display = 'none';
-                    if (btnDisabled) {
-                        btnDisabled.style.display = 'inline-block';
-                        btnDisabled.title = 'Sin periodo definido';
-                    }
+                switch(tiempo) {
+                    case 'Minuto': return diffMs >= 60 * 1000;
+                    case 'Hora': return diffMs >= 60 * 60 * 1000;
+                    case 'Diario': return diffDias >= 1;
+                    case 'Semanal': return diffDias >= 7;
+                    case 'Quincenal': return diffDias >= 15;
+                    case 'Mensual': return diffDias >= 30;
+                    case 'Bimestral': return diffDias >= 60;
+                    case 'Trimestral': return diffDias >= 90;
+                    case 'Cuatrimestral': return diffDias >= 120;
+                    case 'Semestral': return diffDias >= 180;
+                    case 'Anual': return diffDias >= 365;
+                    default: return false;
+                }
+            }
+
+            function obtenerTiempoRestante(fechaCreacion, fechaUltimaEdicion, tiempo) {
+                const fechaBase = fechaUltimaEdicion || fechaCreacion;
+                const ahora = new Date().getTime();
+                const diffMs = ahora - fechaBase;
+                let periodoMs = 0;
+                
+                switch(tiempo) {
+                    case 'Minuto': periodoMs = 60 * 1000; break;
+                    case 'Hora': periodoMs = 60 * 60 * 1000; break;
+                    case 'Diario': periodoMs = 24 * 60 * 60 * 1000; break;
+                    case 'Semanal': periodoMs = 7 * 24 * 60 * 60 * 1000; break;
+                    case 'Quincenal': periodoMs = 15 * 24 * 60 * 60 * 1000; break;
+                    case 'Mensual': periodoMs = 30 * 24 * 60 * 60 * 1000; break;
+                    case 'Bimestral': periodoMs = 60 * 24 * 60 * 60 * 1000; break;
+                    case 'Trimestral': periodoMs = 90 * 24 * 60 * 60 * 1000; break;
+                    case 'Cuatrimestral': periodoMs = 120 * 24 * 60 * 60 * 1000; break;
+                    case 'Semestral': periodoMs = 180 * 24 * 60 * 60 * 1000; break;
+                    case 'Anual': periodoMs = 365 * 24 * 60 * 60 * 1000; break;
+                    default: return '';
+                }
+                
+                const restante = periodoMs - diffMs;
+                if (restante <= 0) return '¡Disponible ahora!';
+                
+                const segundos = Math.floor(restante / 1000);
+                const minutos = Math.floor(segundos / 60);
+                const horas = Math.floor(minutos / 60);
+                const dias = Math.floor(horas / 24);
+                
+                if (dias > 0) return dias + ' día' + (dias > 1 ? 's' : '');
+                if (horas > 0) return horas + ' hora' + (horas > 1 ? 's' : '');
+                if (minutos > 0) return minutos + ' minuto' + (minutos > 1 ? 's' : '');
+                return segundos + ' segundo' + (segundos > 1 ? 's' : '');
+            }
+
+            function mostrarAlerta(titulo, mensaje, tipo = 'danger') {
+                const alerta = document.createElement('div');
+                alerta.className = `alert alert-${tipo} alert-dismissible fade show position-fixed`;
+                alerta.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+                alerta.innerHTML = `
+                    <i class="bi bi-${tipo === 'warning' ? 'exclamation-triangle' : 'info-circle-fill'}"></i> 
+                    <strong>${titulo}</strong><br>
+                    <small>${mensaje}</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(alerta);
+                setTimeout(() => {
+                    if (alerta.parentNode) alerta.remove();
+                }, 5000);
+            }
+
+            // ==================== BUSCADOR ====================
+            function inicializarBuscador() {
+                console.log('🔍 Inicializando buscador...');
+                const input = document.getElementById('buscadorIndicadores');
+                const btnLimpiar = document.getElementById('btnLimpiarBusqueda');
+                const badgeResultados = document.getElementById('badgeResultados');
+                const numMostrados = document.getElementById('numMostrados');
+                const filas = document.querySelectorAll('.registro-item');
+                
+                console.log('📊 Filas encontradas:', filas.length);
+                
+                if (!input) {
+                    console.warn('❌ No se encontró el input del buscador');
                     return;
                 }
-                
-                const puedeEditar = verificarPuedeEditar(fechaCreacion, fechaUltimaEdicion, tiempo);
-                const btnEditar = item.querySelector('.btn-editar');
-                const btnDisabled = item.querySelector('.btn-editar-disabled');
-                
-                if (btnEditar && btnDisabled) {
-                    if (puedeEditar) {
-                        btnEditar.style.display = 'inline-block';
-                        btnDisabled.style.display = 'none';
-                        btnEditar.title = 'Editar registro';
+
+                function obtenerTextoFila(fila) {
+                    let texto = '';
+                    const celdas = fila.querySelectorAll('td');
+                    if (celdas.length >= 3) {
+                        const titulo = celdas[1]?.querySelector('strong')?.textContent || '';
+                        const programa = celdas[2]?.textContent || '';
+                        texto = titulo + ' ' + programa;
+                    }
+                    return texto.toLowerCase();
+                }
+
+                function filtrar() {
+                    const texto = input.value.toLowerCase().trim();
+                    let visibles = 0;
+                    
+                    const mensajeNoResultados = document.getElementById('mensajeNoResultados');
+                    if (mensajeNoResultados) {
+                        mensajeNoResultados.remove();
+                    }
+                    
+                    filas.forEach(fila => {
+                        const textoFila = obtenerTextoFila(fila);
+                        const coincide = !texto || textoFila.includes(texto);
+                        fila.style.display = coincide ? '' : 'none';
+                        if (coincide) visibles++;
+                    });
+                    
+                    if (texto) {
+                        badgeResultados.classList.add('visible');
+                        numMostrados.textContent = visibles;
                     } else {
-                        btnEditar.style.display = 'none';
-                        btnDisabled.style.display = 'inline-block';
-                        const tiempoRestante = obtenerTiempoRestante(fechaCreacion, fechaUltimaEdicion, tiempo);
-                        btnDisabled.title = tiempoRestante ? `Disponible en: ${tiempoRestante}` : 'Esperando periodo';
+                        badgeResultados.classList.remove('visible');
+                    }
+                    
+                    btnLimpiar.style.display = texto ? 'block' : 'none';
+                    
+                    if (visibles === 0 && texto) {
+                        const tbody = document.getElementById('tablaBody');
+                        if (tbody) {
+                            const mensaje = document.createElement('tr');
+                            mensaje.id = 'mensajeNoResultados';
+                            mensaje.innerHTML = `
+                                <td colspan="7" class="text-center text-muted py-5">
+                                    <i class="bi bi-search" style="font-size: 2rem; display: block; margin-bottom: 1rem;"></i>
+                                    <p class="mb-0">No se encontraron resultados para <strong>"${texto}"</strong></p>
+                                    <p class="small">Prueba con otra palabra clave</p>
+                                </td>
+                            `;
+                            tbody.appendChild(mensaje);
+                        }
                     }
                 }
-            });
-        }
+                
+                input.addEventListener('input', filtrar);
+                
+                btnLimpiar.addEventListener('click', function() {
+                    input.value = '';
+                    filtrar();
+                    input.focus();
+                });
+                
+                console.log('✅ Buscador inicializado');
+            }
 
-        // Ejecutar al cargar la página
-        document.addEventListener('DOMContentLoaded', function() {
-            cargarColoresGuardados();
-            actualizarBotonesEditar();
-        });
+            // ==================== MOVER INDICADORES ====================
+            function inicializarMoverIndicadores() {
+                document.querySelectorAll('.btn-mover-arriba, .btn-mover-abajo').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const esArriba = this.classList.contains('btn-mover-arriba');
+                        const fila = this.closest('.registro-item');
+                        const id = fila.getAttribute('data-id');
+                        const direccion = esArriba ? 'arriba' : 'abajo';
+                        
+                        const urlParts = window.location.pathname.split('/');
+                        const seccion = urlParts[1];
+                        const tema = urlParts[2];
+                        
+                        const botones = fila.querySelectorAll('.btn-mover-arriba, .btn-mover-abajo');
+                        botones.forEach(b => b.disabled = true);
+                        botones.forEach(b => b.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>');
+                        
+                        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content') || '';
+                        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content') || 'X-CSRF-TOKEN';
+                        
+                        fetch(`/${seccion}/${tema}/mover/${id}/${direccion}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                [csrfHeader]: csrfToken
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                mostrarAlerta('❌ Error', data.mensaje, 'danger');
+                                botones.forEach(b => {
+                                    b.disabled = false;
+                                    b.innerHTML = esArriba ? '<i class="bi bi-chevron-up"></i>' : '<i class="bi bi-chevron-down"></i>';
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            mostrarAlerta('❌ Error', 'Error al mover el indicador', 'danger');
+                            botones.forEach(b => {
+                                b.disabled = false;
+                                b.innerHTML = esArriba ? '<i class="bi bi-chevron-up"></i>' : '<i class="bi bi-chevron-down"></i>';
+                            });
+                        });
+                    });
+                });
+            }
 
-        // Actualizar botones cada 30 segundos
-        setInterval(actualizarBotonesEditar, 30000);
+            // ==================== CONTROL DE EDICIÓN ====================
+            function actualizarBotonesEditar() {
+                document.querySelectorAll('.registro-item').forEach(item => {
+                    const fechaCreacion = parseInt(item.getAttribute('data-fecha-creacion')) || 0;
+                    const fechaUltimaEdicion = parseInt(item.getAttribute('data-fecha-ultima-edicion')) || 0;
+                    const tiempo = item.getAttribute('data-tiempo');
+                    
+                    const btnEditar = item.querySelector('.btn-editar');
+                    const btnDisabled = item.querySelector('.btn-editar-disabled');
+                    
+                    if (!tiempo || tiempo === '') {
+                        if (btnEditar) btnEditar.style.display = 'none';
+                        if (btnDisabled) {
+                            btnDisabled.style.display = 'inline-block';
+                            btnDisabled.title = 'Sin periodo definido';
+                        }
+                        return;
+                    }
+                    
+                    const puedeEditar = verificarPuedeEditar(fechaCreacion, fechaUltimaEdicion, tiempo);
+                    
+                    if (btnEditar && btnDisabled) {
+                        if (puedeEditar) {
+                            btnEditar.style.display = 'inline-block';
+                            btnDisabled.style.display = 'none';
+                            btnEditar.title = 'Editar registro';
+                        } else {
+                            btnEditar.style.display = 'none';
+                            btnDisabled.style.display = 'inline-block';
+                            const tiempoRestante = obtenerTiempoRestante(fechaCreacion, fechaUltimaEdicion, tiempo);
+                            btnDisabled.title = tiempoRestante ? `Disponible en: ${tiempoRestante}` : 'Esperando periodo';
+                        }
+                    }
+                });
+            }
+
+            // ==================== INICIALIZACIÓN ====================
+            function init() {
+                console.log('🚀 Inicializando todos los componentes...');
+                actualizarBotonesEditar();
+                inicializarBuscador();
+                inicializarMoverIndicadores();
+                
+                setInterval(actualizarBotonesEditar, 30000);
+                
+                console.log('✅ Todos los componentes inicializados correctamente');
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+        })();
     </script>
 </body>
 </html>

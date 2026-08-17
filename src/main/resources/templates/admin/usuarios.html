@@ -40,6 +40,107 @@
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+        /* ========== ESTILOS DEL FOOTER ========== */
+        .footer {
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            color: #ffffff;
+            padding: 3rem 0 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-brand {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .footer-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.25s ease;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .footer-links li i {
+            margin-top: 0.15rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+
+        .footer-links li a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .footer {
+                padding: 2rem 0 1rem;
+            }
+            .row > div {
+                margin-bottom: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -171,38 +272,44 @@
                             <td><strong th:text="${user.username}">username</strong></td>
                             <td th:text="${user.nombreCompleto}">nombre</td>
                             <td th:text="${user.email}">email</td>
+                            <!-- ✅ ROL CORREGIDO -->
                             <td>
-                                <span th:if="${user.rol == 'ADMIN'}" class="badge badge-admin">ADMIN</span>
-                                <span th:if="${user.rol == 'USUARIO'}" class="badge badge-user">USUARIO</span>
+                                <span th:if="${user.rol == 'ADMIN' or user.rol == 'ROLE_ADMIN'}" class="badge badge-admin">ADMIN</span>
+                                <span th:if="${user.rol == 'USUARIO' or user.rol == 'ROLE_USUARIO'}" class="badge badge-user">USUARIO</span>
+                                <span th:unless="${user.rol == 'ADMIN' or user.rol == 'ROLE_ADMIN' or user.rol == 'USUARIO' or user.rol == 'ROLE_USUARIO'}" 
+                                    class="badge bg-secondary" th:text="${user.rol}">OTRO</span>
                             </td>
+                            <!-- ✅ AREA ASIGNADA CORREGIDA -->
                             <td>
-                                <span th:if="${user.rol == 'ADMIN'}">
+                                <span th:if="${user.rol == 'ADMIN' or user.rol == 'ROLE_ADMIN'}">
                                     <span class="badge bg-primary">Todas</span>
                                 </span>
-                                <span th:if="${user.rol == 'USUARIO' and user.seccionesAcceso != null}">
-                                    <span th:each="sec : ${user.seccionesAcceso}" class="badge bg-secondary me-1" 
-                                        th:text="${#strings.capitalize(sec)}">seccion</span>
-                                </span>
-                                <span th:if="${user.rol == 'USUARIO' and (user.seccionesAcceso == null or user.seccionesAcceso.empty)}">
-                                    <span class="badge bg-danger">Sin acceso</span>
+                                <span th:if="${user.rol == 'USUARIO' or user.rol == 'ROLE_USUARIO'}">
+                                    <span th:if="${user.seccionesAcceso != null and !user.seccionesAcceso.empty}">
+                                        <span th:each="sec : ${user.seccionesAcceso}" class="badge bg-secondary me-1" 
+                                            th:text="${#strings.capitalize(sec)}">seccion</span>
+                                    </span>
+                                    <span th:unless="${user.seccionesAcceso != null and !user.seccionesAcceso.empty}">
+                                        <span class="badge bg-danger">Sin acceso</span>
+                                    </span>
                                 </span>
                             </td>
-                            <!-- ✅ Estado con Toggle -->
+                            <!-- ✅ ESTADO (Toggle) -->
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="form-check form-switch mb-0 me-2">
                                         <input class="form-check-input" type="checkbox" 
-                                               th:checked="${user.enabled}"
-                                               th:data-id="${user.id}"
-                                               th:data-username="${user.username}"
-                                               onchange="toggleUsuario(this)"
-                                               style="cursor: pointer; width: 36px; height: 18px;">
+                                            th:checked="${user.enabled}"
+                                            th:data-id="${user.id}"
+                                            th:data-username="${user.username}"
+                                            onchange="toggleUsuario(this)"
+                                            style="cursor: pointer; width: 36px; height: 18px;">
                                     </div>
                                     <span th:if="${user.enabled}" class="badge bg-success status-label">Activo</span>
                                     <span th:unless="${user.enabled}" class="badge bg-secondary status-label">Inactivo</span>
                                 </div>
                             </td>
-                            <!-- ✅ Verificado -->
+                            <!-- ✅ VERIFICADO -->
                             <td>
                                 <span th:if="${user.emailVerificado}" class="badge bg-success">
                                     <i class="bi bi-check-circle"></i> Verificado
@@ -214,19 +321,19 @@
                             <td th:text="${#temporals.format(user.fechaRegistro, 'dd/MM/yyyy')}">fecha</td>
                             <td class="text-center">
                                 <a th:href="@{/admin/usuarios/editar/{id}(id=${user.id})}" 
-                                   class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                class="btn btn-sm btn-outline-primary me-1" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <a th:href="@{/admin/usuarios/eliminar/{id}(id=${user.id})}" 
-                                   class="btn btn-sm btn-outline-danger" 
-                                   title="Eliminar"
-                                   onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
+                                class="btn btn-sm btn-outline-danger" 
+                                title="Eliminar"
+                                onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(usuarios)}">
-                            <td colspan="8" class="text-center text-muted py-4">
+                            <td colspan="9" class="text-center text-muted py-4">
                                 <i class="bi bi-inbox fs-1"></i>
                                 <p>No hay usuarios registrados</p>
                             </td>
@@ -236,6 +343,9 @@
             </div>
         </div>
     </div>
+
+        <!-- Footer -->
+    <div th:replace="~{fragmentos/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>

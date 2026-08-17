@@ -37,6 +37,93 @@
             opacity: 0.9;
             font-size: 0.9rem;
         }
+
+        /* ============ ESTILOS PARA SELECTOR DE COLOR ============ */
+        .color-selector {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+        
+        .color-option-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 3px solid #e9ecef;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            background: white;
+        }
+        
+        .color-option-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .color-option-card.seleccionado {
+            border-color: #0d6efd;
+            background: #f0f7ff;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+        }
+        
+        .color-option-card .color-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #dee2e6;
+            margin-bottom: 5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .color-option-card.seleccionado .color-circle {
+            transform: scale(1.1);
+            border-color: #0d6efd;
+        }
+        
+        .color-option-card .color-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .color-option-card .color-check {
+            display: none;
+            color: #0d6efd;
+            font-size: 1.2rem;
+            margin-top: 3px;
+        }
+        
+        .color-option-card.seleccionado .color-check {
+            display: block;
+        }
+        
+        .color-option-card input[type="radio"] {
+            display: none;
+        }
+        
+        /* Color de los círculos */
+        .color-circle.verde { background-color: #28a745; }
+        .color-circle.amarillo { background-color: #ffc107; }
+        .color-circle.rojo { background-color: #dc3545; }
+        .color-circle.gris { background-color: #6c757d; }
+        .color-circle.sin-color { 
+            background: linear-gradient(135deg, #e9ecef 50%, #dee2e6 50%);
+            border-style: dashed;
+        }
+        
+        .text-verde { color: #28a745; }
+        .text-amarillo { color: #ffc107; }
+        .text-rojo { color: #dc3545; }
+        .text-gris { color: #6c757d; }
+        
+        /* Tooltip de ayuda */
+        .help-tooltip {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -52,7 +139,7 @@
         <!-- Tarjeta del Formulario -->
         <div class="form-card">
             
-            <!-- ✅ CABECERA CON EL NOMBRE DEL PROGRAMA ✅ -->
+            <!-- CABECERA -->
             <div class="header-programa">
                 <i class="bi bi-building fs-4"></i>
                 <h3 th:text="${tituloPagina}">Nombre del Programa</h3>
@@ -63,7 +150,7 @@
 
             <hr class="mb-4">
 
-            <!-- Mensaje de Error -->
+            <!-- Mensajes -->
             <div th:if="${error}" class="alert alert-danger" role="alert">
                 <i class="bi bi-exclamation-circle"></i> <span th:text="${error}">Error</span>
             </div>
@@ -77,9 +164,12 @@
                 '/' + seccionUrl + '/' + temaUrl + '/actualizar/' + main.id}}" 
                 method="post" th:object="${main}">
 
-                <!-- Campo Seccion (Oculto) -->
+                <!-- ============ CAMPOS OCULTOS ============ -->
                 <input type="hidden" th:field="*{seccion}" th:value="${seccionUrl + '_' + temaUrl}" />
+                <input type="hidden" th:field="*{orden}" />
 
+                <!-- ============ CAMPOS VISIBLES ============ -->
+                
                 <!-- Título -->
                 <div class="mb-4">
                     <label for="titulo" class="form-label fw-bold">
@@ -89,29 +179,23 @@
                            placeholder="Ej: Construcción de puente..." required>
                 </div>
 
-                <!-- Programa / Área Responsable (SOLO LECTURA) -->
+                <!-- Programa / Área Responsable -->
                 <div class="mb-4">
                     <label for="programa" class="form-label fw-bold">Programa / Área Responsable</label>
                     <input type="hidden" th:field="*{programa}" th:value="${tituloPagina}">
                     <input type="text" id="programa" th:value="${tituloPagina}" 
                         class="form-control campo-solo-lectura" 
                         readonly disabled>
-                    <!-- Campo oculto para enviar el valor al backend -->
-                    <!--<input type="hidden" th:field="*{programa}" th:value="${tituloPagina}"> -->
                     <div class="form-text text-muted">
                         <i class="bi bi-info-circle"></i> Este campo es automático y no se puede modificar
                     </div>
                 </div>
 
-                <!-- PERIODICAMENTE - Opciones seleccionables -->
+                <!-- PERIODICAMENTE -->
                 <div class="mb-4">
                     <label for="tiempo" class="form-label fw-bold">Periódicamente</label>
                     <select id="tiempo" th:field="*{tiempo}" class="form-select">
                         <option value="">Seleccione un periodo...</option>
-                        <option value="Minuto">Minuto</option>
-                        <option value="Hora">Hora</option>
-                        <option value="Semanal">Semanal</option>
-                        <option value="Quincenal">Quincenal</option>
                         <option value="Mensual">Mensual</option>
                         <option value="Bimestral">Bimestral</option>
                         <option value="Trimestral">Trimestral</option>
@@ -134,6 +218,63 @@
                     </div>
                 </div>
 
+                <!-- ============ SEMÁFORO / COLOR (NUEVO) ============ -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-circle-fill text-secondary"></i> Estado del Semáforo
+                        <span class="badge bg-info ms-2" style="font-size: 0.65rem;">
+                            <i class="bi bi-info-circle"></i> Selecciona un color
+                        </span>
+                    </label>
+                    
+                    <div class="color-selector" id="colorSelector">
+                        <!-- Sin color -->
+                        <label class="color-option-card" data-color="">
+                            <input type="radio" name="colorSeleccionado" value="">
+                            <div class="color-circle sin-color"></div>
+                            <span class="color-label text-muted">Sin color</span>
+                            <i class="bi bi-check-circle-fill color-check"></i>
+                        </label>
+                        
+                        <!-- Verde -->
+                        <label class="color-option-card" data-color="verde">
+                            <input type="radio" name="colorSeleccionado" value="verde">
+                            <div class="color-circle verde"></div>
+                            <span class="color-label text-verde">Aceptable</span>
+                            <i class="bi bi-check-circle-fill color-check"></i>
+                        </label>
+                        
+                        <!-- Amarillo -->
+                        <label class="color-option-card" data-color="amarillo">
+                            <input type="radio" name="colorSeleccionado" value="amarillo">
+                            <div class="color-circle amarillo"></div>
+                            <span class="color-label text-amarillo">En riesgo</span>
+                            <i class="bi bi-check-circle-fill color-check"></i>
+                        </label>
+                        
+                        <!-- Rojo -->
+                        <label class="color-option-card" data-color="rojo">
+                            <input type="radio" name="colorSeleccionado" value="rojo">
+                            <div class="color-circle rojo"></div>
+                            <span class="color-label text-rojo">Crítico</span>
+                            <i class="bi bi-check-circle-fill color-check"></i>
+                        </label>
+                        
+                        <!-- Gris -->
+                        <label class="color-option-card" data-color="gris">
+                            <input type="radio" name="colorSeleccionado" value="gris">
+                            <div class="color-circle gris"></div>
+                            <span class="color-label text-gris">Fallo en planeación</span>
+                            <i class="bi bi-check-circle-fill color-check"></i>
+                        </label>
+                    </div>
+                    
+                    <div class="help-tooltip mt-2">
+                        <i class="bi bi-info-circle"></i> 
+                        El color seleccionado se mostrará en la tabla y no podrá modificarse después de guardar
+                    </div>
+                </div>
+
                 <!-- Botones -->
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
                     <a th:href="@{/{seccionUrl}/{temaUrl} (seccionUrl=${seccionUrl}, temaUrl=${temaUrl})}" class="btn btn-light btn-custom me-md-2">
@@ -150,8 +291,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // ==================== PROGRESO ====================
         const porcentajeInput = document.getElementById('porcentaje');
         const progresoBar = document.getElementById('progresoBar');
+        
         function actualizarProgreso() {
             let valor = parseFloat(porcentajeInput.value) || 0;
             if (valor < 0) valor = 0;
@@ -161,8 +304,54 @@
             else if (valor < 70) progresoBar.className = 'progress-bar bg-warning';
             else progresoBar.className = 'progress-bar bg-success';
         }
+        
         porcentajeInput.addEventListener('input', actualizarProgreso);
         actualizarProgreso();
+
+        // ==================== SELECTOR DE COLOR ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            const colorCards = document.querySelectorAll('.color-option-card');
+            const radioInputs = document.querySelectorAll('input[name="colorSeleccionado"]');
+            
+            // Si hay un color seleccionado previamente (edición), marcarlo
+            const colorSeleccionadoActual = document.querySelector('input[name="colorSeleccionado"][value]')?.value;
+            if (colorSeleccionadoActual) {
+                colorCards.forEach(card => {
+                    const radio = card.querySelector('input[type="radio"]');
+                    if (radio && radio.value === colorSeleccionadoActual) {
+                        card.classList.add('seleccionado');
+                    }
+                });
+            }
+
+            // Evento click en cada tarjeta
+            colorCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Evitar que el click en el radio lo desmarque
+                    if (e.target.tagName === 'INPUT') return;
+                    
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) {
+                        // Desmarcar todos
+                        colorCards.forEach(c => c.classList.remove('seleccionado'));
+                        // Marcar este
+                        radio.checked = true;
+                        this.classList.add('seleccionado');
+                    }
+                });
+            });
+
+            // Evento change en los radios (por si alguien hace click directo en el radio)
+            radioInputs.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    colorCards.forEach(c => c.classList.remove('seleccionado'));
+                    if (this.checked) {
+                        const parent = this.closest('.color-option-card');
+                        if (parent) parent.classList.add('seleccionado');
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

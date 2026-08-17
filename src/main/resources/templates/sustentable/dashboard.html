@@ -5,10 +5,6 @@
     <title th:text="${seccionNombre} + ' - Dashboard'">Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    <!-- ==========================================
-         ESTILOS COMPLETOS (igual que el primer dashboard)
-         ========================================== -->
     <style>
         /* --- FONDO GENERAL --- */
         body { 
@@ -68,17 +64,36 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
-        /* --- BOTÓN VOLVER --- */
-        .btn-volver {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
+        /* ============ BREADCRUMB (segundo nav) ============ */
+        .breadcrumb-custom {
+            background: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
         }
         
-        .btn-volver:hover {
-            background: rgba(255,255,255,0.3);
-            color: white;
-            transform: translateY(-2px);
+        .breadcrumb-custom .breadcrumb {
+            margin-bottom: 0;
+            background: transparent;
+            padding: 0;
+            font-size: 0.875rem;
+        }
+        
+        .breadcrumb-custom .breadcrumb-item a {
+            text-decoration: none;
+            color: #0d6efd;
+            transition: color 0.2s ease;
+        }
+        
+        .breadcrumb-custom .breadcrumb-item a:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: #6c757d;
+            font-weight: 500;
         }
         
         /* --- DROPDOWN DE USUARIO --- */
@@ -107,21 +122,96 @@
             color: #ffffff;
         }
         
-        /* --- FOOTER --- */
+        /* ========== ESTILOS DEL FOOTER ========== */
         .footer {
-            background: white;
-            border-top: 1px solid #dee2e6;
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            color: #ffffff;
+            padding: 3rem 0 1.5rem;
             margin-top: 4rem;
-            padding: 2rem 0;
         }
-        
-        .footer a {
+
+        .footer-brand {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .footer-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-radius: 6px;
             text-decoration: none;
-            transition: color 0.2s ease;
+            transition: background 0.25s ease;
         }
-        
-        .footer a:hover {
-            color: #0d6efd !important;
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .footer-links li i {
+            margin-top: 0.15rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+
+        .footer-links li a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
         }
         
         /* --- RESPONSIVE --- */
@@ -138,12 +228,7 @@
             .navbar-custom {
                 border-radius: 12px;
             }
-            
-            .btn-volver {
-                font-size: 0.8rem;
-                padding: 0.25rem 0.5rem;
-            }
-            
+                        
             .dropdown-user {
                 min-width: 180px;
             }
@@ -168,7 +253,7 @@
 <body>
     <div class="container my-4">
 
-        <!-- ========== NAVBAR CON PERFIL Y CIERRE DE SESIÓN ========== -->
+        <!-- ========== NAVBAR PRINCIPAL ========== -->
         <nav class="navbar navbar-dark navbar-custom mb-4 p-3">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/inicio">
@@ -176,18 +261,9 @@
                     <strong>OmniView</strong> - Gobierno Municipal
                 </a>
                 
-                <div class="d-flex align-items-center">
-                    <!-- Botón Volver al Inicio integrado en navbar -->
-                    <a href="/" class="btn btn-volver btn-sm me-3">
-                        <i class="bi bi-arrow-left"></i> Volver al Inicio
-                    </a>
-                    
-                    <!-- Nombre del usuario -->
-                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
-                        Usuario
-                    </span>
-                    
-                    <!-- Icono de perfil con menú desplegable -->
+                <div class="d-flex align-items-center">   
+                    <div th:replace="~{fragmentos/notificaciones :: notificaciones}"></div>              
+                    <!-- Menú de usuario -->
                     <div class="dropdown">
                         <button class="btn btn-light rounded-circle d-flex align-items-center justify-content-center" 
                                 style="width: 40px; height: 40px;" 
@@ -226,9 +302,24 @@
                             </li>
                         </ul>
                     </div>
+
+                    <!-- Nombre del usuario -->
+                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
+                        Usuario
+                    </span>
                 </div>
             </div>
         </nav>
+
+        <!-- ========== SEGUNDO NAV: RUTA / UBICACIÓN ========== -->
+        <div class="breadcrumb-custom mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/inicio"><i class="bi bi-house-door"></i> Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${seccionNombre}">Sección</li>
+                </ol>
+            </nav>
+        </div>
 
         <!-- Encabezado de la sección -->
         <div class="header-bar p-5 mb-5 text-center">
@@ -308,35 +399,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <i class="bi bi-building text-primary"></i>
-                    <strong>OmniView - Sindicatura Municipal</strong>
-                    <p class="text-muted small mt-2">Plataforma integral para el seguimiento y evaluación de programas municipales</p>
-                </div>
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <h5>Contacto</h5>
-                    <p class="text-muted small mb-1"><i class="bi bi-envelope"></i>
-                        <a href="mailto:sindicatura@municipio.com">sindicatura@municipio.com</a>
-                    </p>
-                    <p class="text-muted small mb-0"><i class="bi bi-telephone"></i> +52 777 123 4567</p>
-                </div>
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <h5>Redes Sociales</h5>
-                    <p class="text-muted small mb-1">
-                        <a href="#" class="text-muted me-2"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-muted me-2"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="text-muted"><i class="bi bi-linkedin"></i></a>
-                    </p>
-                </div>
-                <div class="col-12 mt-3 text-center">
-                    <p class="text-muted small mb-0">&copy; 2026 OmniView. Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <div th:replace="~{fragmentos/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

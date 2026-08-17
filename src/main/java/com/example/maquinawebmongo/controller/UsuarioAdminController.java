@@ -48,9 +48,25 @@ public class UsuarioAdminController {
         return secciones;
     }
 
-    // Listar todos los usuarios
+    private boolean esAdmin() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth == null) return false;
+    
+    return auth.getAuthorities().stream()
+        .anyMatch(g -> {
+            String authority = g.getAuthority();
+            return "ROLE_ADMIN".equals(authority) || 
+                   "ADMIN".equals(authority);
+        });
+    }
+
+    // ==================== LISTAR USUARIOS ====================
     @GetMapping
     public String listarUsuarios(Model model, Authentication auth) {
+        // Verificar si el usuario es admin
+        if (!esAdmin()) {
+            return "redirect:/inicio";
+        }
         String username = auth.getName();
         System.out.println("🔍 Accediendo a /admin/usuarios con usuario: " + username);
 
@@ -58,16 +74,22 @@ public class UsuarioAdminController {
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             System.out.println("🔍 Rol en UsuarioAdminController: " + usuario.getRol());
-            if (!usuario.getRol().equals("ADMIN")) {
-            System.out.println("❌ No es ADMIN, redirigiendo...");
-            return "redirect:/inicio";
-        }
-        System.out.println("✅ Es ADMIN, mostrando lista de usuarios");
+            
+            // ✅ NORMALIZAR ROL ANTES DE COMPARAR
+            String rolUsuario = usuario.getRol();
+            if (rolUsuario != null && !rolUsuario.startsWith("ROLE_")) {
+                rolUsuario = "ROLE_" + rolUsuario;
+            }
+            if (!"ROLE_ADMIN".equals(rolUsuario)) {
+                System.out.println("❌ No es ADMIN, redirigiendo...");
+                return "redirect:/inicio";
+            }
+            System.out.println("✅ Es ADMIN, mostrando lista de usuarios");
         }
         model.addAttribute("usuarios", usuarioService.listarTodos());
         model.addAttribute("totalUsuarios", usuarioService.contarUsuarios());
-        model.addAttribute("totalAdmins", usuarioService.contarPorRol("ADMIN"));
-        model.addAttribute("totalUsuariosNormales", usuarioService.contarPorRol("USUARIO"));
+        model.addAttribute("totalAdmins", usuarioService.contarPorRol("ROLE_ADMIN"));
+        model.addAttribute("totalUsuariosNormales", usuarioService.contarPorRol("ROLE_USUARIO"));
         return "admin/usuarios";
     }
 
@@ -82,59 +104,69 @@ public class UsuarioAdminController {
     }
 
     // Guardar usuario
+    // ==================== GUARDAR USUARIO ====================
     @PostMapping("/guardar")
     public String guardarUsuario(@ModelAttribute Usuario usuario,
-                             @RequestParam String confirmarPassword,
-                             @RequestParam(required = false) List<String> seccionesAcceso,
-                             RedirectAttributes ra) {
-    try {
-        // 1. Validar correo
-        if (!usuarioService.esCorreoValido(usuario.getEmail())) {
-            ra.addFlashAttribute("error", "❌ El correo electrónico no es válido. Usa un correo real (Gmail, Hotmail, UTEZ, etc.)");
-            return "redirect:/admin/usuarios/nuevo";
-        }
+                                @RequestParam String confirmarPassword,
+                                @RequestParam(required = false) List<String> seccionesAcceso,
+                                RedirectAttributes ra) {
+        try {
+            // ✅ NORMALIZAR ROL: Si es "ADMIN", convertirlo a "ROLE_ADMIN"
+            if (usuario.getRol() != null && usuario.getRol().equals("ADMIN")) {
+                usuario.setRol("ROLE_ADMIN");
+            }
+            
+            // ✅ Recortar espacios del correo
+            if (usuario.getEmail() != null) {
+                usuario.setEmail(usuario.getEmail().trim().toLowerCase());
+            }
 
-        // 2. Validar usuario existente
-        if (usuarioService.existeUsuario(usuario.getUsername())) {
-            ra.addFlashAttribute("error", "❌ El nombre de usuario ya existe");
-            return "redirect:/admin/usuarios/nuevo";
-        }
-
-        // 3. Validar email existente
-        if (usuarioService.existeEmail(usuario.getEmail())) {
-            ra.addFlashAttribute("error", "❌ El correo electrónico ya está registrado");
-            return "redirect:/admin/usuarios/nuevo";
-        }
-
-        // 4. Validar contraseñas
-        if (!usuario.getPassword().equals(confirmarPassword)) {
-            ra.addFlashAttribute("error", "❌ Las contraseñas no coinciden");
-            return "redirect:/admin/usuarios/nuevo";
-        }
-
-        // 5. Validar secciones (solo si es USUARIO)
-        if (usuario.getRol().equals("ADMIN")) {
-            usuario.setSeccionesAcceso(null); // ADMIN tiene acceso a todo
-        } else {
-            if (seccionesAcceso == null || seccionesAcceso.isEmpty()) {
-                ra.addFlashAttribute("error", "❌ El usuario debe tener al menos una sección asignada");
+            // 1. Validar correo
+            if (!usuarioService.esCorreoValido(usuario.getEmail())) {
+                ra.addFlashAttribute("error", "❌ El correo electrónico no es válido. Usa un correo real (Gmail, Hotmail, UTEZ, etc.)");
                 return "redirect:/admin/usuarios/nuevo";
             }
-            usuario.setSeccionesAcceso(seccionesAcceso);
+
+            // 2. Validar usuario existente
+            if (usuarioService.existeUsuario(usuario.getUsername())) {
+                ra.addFlashAttribute("error", "❌ El nombre de usuario ya existe");
+                return "redirect:/admin/usuarios/nuevo";
+            }
+
+            // 3. Validar email existente
+            if (usuarioService.existeEmail(usuario.getEmail())) {
+                ra.addFlashAttribute("error", "❌ El correo electrónico ya está registrado");
+                return "redirect:/admin/usuarios/nuevo";
+            }
+
+            // 4. Validar contraseñas
+            if (!usuario.getPassword().equals(confirmarPassword)) {
+                ra.addFlashAttribute("error", "❌ Las contraseñas no coinciden");
+                return "redirect:/admin/usuarios/nuevo";
+            }
+
+            // 5. Validar secciones (solo si es ADMIN)
+            if ("ROLE_ADMIN".equals(usuario.getRol())) {
+                usuario.setSeccionesAcceso(null);
+            } else {
+                if (seccionesAcceso == null || seccionesAcceso.isEmpty()) {
+                    ra.addFlashAttribute("error", "❌ El usuario debe tener al menos una sección asignada");
+                    return "redirect:/admin/usuarios/nuevo";
+                }
+                usuario.setSeccionesAcceso(seccionesAcceso);
+            }
+
+            // 6. Guardar usuario
+            String passwordSinEncriptar = usuario.getPassword();
+            Usuario usuarioCreado = usuarioService.registrarUsuario(usuario, passwordSinEncriptar);
+
+            ra.addFlashAttribute("mensaje", "✅ Usuario creado exitosamente. Se ha enviado un correo de verificación a " + usuarioCreado.getEmail());
+            return "redirect:/admin/usuarios";
+
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "❌ Error al crear usuario: " + e.getMessage());
+            return "redirect:/admin/usuarios/nuevo";
         }
-        
-
-        // 6. Guardar usuario
-        String passwordSinEncriptar = usuario.getPassword();
-        Usuario usuarioCreado = usuarioService.registrarUsuario(usuario, passwordSinEncriptar);
-
-        ra.addFlashAttribute("mensaje", "✅ Usuario creado exitosamente. Se ha enviado un correo de verificación a " + usuarioCreado.getEmail());
-        return "redirect:/admin/usuarios";
-
-    } catch (Exception e) {
-        ra.addFlashAttribute("error", "❌ Error al crear usuario: " + e.getMessage());
-        return "redirect:/admin/usuarios/nuevo";
-    }
     }
 
     // Formulario para editar usuario
@@ -157,7 +189,7 @@ public class UsuarioAdminController {
         }
     }
 
-    // Actualizar usuario
+    // ==================== ACTUALIZAR USUARIO ====================
     @PostMapping("/actualizar/{id}")
     public String actualizarUsuario(@PathVariable String id,
                                     @ModelAttribute Usuario usuarioActualizado,
@@ -173,13 +205,23 @@ public class UsuarioAdminController {
                 return "redirect:/admin/usuarios";
             }
 
+            // ✅ NORMALIZAR ROL: Si es "ADMIN", convertirlo a "ROLE_ADMIN"
+            if (usuarioActualizado.getRol() != null && usuarioActualizado.getRol().equals("ADMIN")) {
+                usuarioActualizado.setRol("ROLE_ADMIN");
+            }
+
+            // ✅ Recortar espacios del correo
+            if (usuarioActualizado.getEmail() != null) {
+                usuarioActualizado.setEmail(usuarioActualizado.getEmail().trim().toLowerCase());
+            }
+
             // Actualizar campos
             usuario.setNombreCompleto(usuarioActualizado.getNombreCompleto());
             usuario.setEmail(usuarioActualizado.getEmail());
             usuario.setRol(usuarioActualizado.getRol());
             usuario.setEnabled(usuarioActualizado.isEnabled());
 
-            if (usuario.getRol().equals("ADMIN")) {
+            if ("ROLE_ADMIN".equals(usuario.getRol())) {
                 usuario.setSeccionesAcceso(null);
             } else {
                 if (seccionesAcceso == null || seccionesAcceso.isEmpty()) {
@@ -227,7 +269,7 @@ public class UsuarioAdminController {
             }
 
             // No permitir eliminar al último admin
-            if (usuario.getRol().equals("ADMIN") && usuarioService.contarPorRol("ADMIN") <= 1) {
+            if ("ROLE_ADMIN".equals(usuario.getRol()) && usuarioService.contarPorRol("ROLE_ADMIN") <= 1) {
                 ra.addFlashAttribute("error", "No se puede eliminar al único administrador del sistema");
                 return "redirect:/admin/usuarios";
             }
@@ -252,7 +294,7 @@ public class UsuarioAdminController {
             }
 
             // No permitir desactivar al último administrador
-            if (usuario.getRol().equals("ADMIN") && usuarioService.contarPorRol("ADMIN") <= 1) {
+            if ("ROLE_ADMIN".equals(usuario.getRol()) && usuarioService.contarPorRol("ROLE_ADMIN") <= 1) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("error", "No se puede desactivar al único administrador del sistema");

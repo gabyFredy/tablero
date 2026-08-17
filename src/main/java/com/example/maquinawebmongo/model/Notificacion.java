@@ -2,7 +2,7 @@ package com.example.maquinawebmongo.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Document(collection = "notificaciones")
 public class Notificacion {
@@ -15,7 +15,7 @@ public class Notificacion {
     private String tipo;  // INFO, WARNING, SUCCESS
     private String urlRelacionada;
     private boolean leida;
-    private Date fechaCreacion;
+    private LocalDateTime fechaCreacion;
     private String registroId;  // ID del indicador relacionado
     private String tipoNotificacion;
     
@@ -29,7 +29,7 @@ public class Notificacion {
         this.urlRelacionada = urlRelacionada;
         this.registroId = registroId;
         this.leida = false;
-        this.fechaCreacion = new Date();
+        this.fechaCreacion = LocalDateTime.now();
     }
     
     // Getters y Setters
@@ -47,8 +47,8 @@ public class Notificacion {
     public void setUrlRelacionada(String urlRelacionada) { this.urlRelacionada = urlRelacionada; }
     public boolean isLeida() { return leida; }
     public void setLeida(boolean leida) { this.leida = leida; }
-    public Date getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(Date fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
     public String getRegistroId() { return registroId; }
     public void setRegistroId(String registroId) { this.registroId = registroId; }
     public String getTipoNotificacion() { return tipoNotificacion; }

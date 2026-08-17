@@ -26,6 +26,10 @@ public class Main {
     private boolean notificado = false;
     private boolean notificacionEnviada = false; // Nuevo campo para indicar si la notificación ya fue enviada
 
+    private Integer orden = 0; // Nuevo campo para el orden de los elementos dentro de una sección
+
+    private String colorSeleccionado; // Campo para almacenar el color seleccionado por el usuario
+
     private transient boolean puedeEditar; // Campo temporal para la vista, no se guarda en MongoDB
 
     // Constructores
@@ -65,6 +69,12 @@ public class Main {
     public boolean isNotificacionEnviada() { return notificacionEnviada; }
     public void setNotificacionEnviada(boolean notificacionEnviada) { this.notificacionEnviada = notificacionEnviada; }
 
+    public Integer getOrden() { return orden; }
+    public void setOrden(Integer orden) { this.orden = orden; }
+
+    public String getColorSeleccionado() { return colorSeleccionado; }
+    public void setColorSeleccionado(String colorSeleccionado) { this.colorSeleccionado = colorSeleccionado; }
+
     // ToString
     @Override
     public String toString() {
@@ -80,6 +90,8 @@ public class Main {
                 ", fechaUltimaEdicion=" + fechaUltimaEdicion +
                 ", notificado=" + notificado +
                 ", notificacionEnviada=" + notificacionEnviada +
+                ", orden=" + orden +
+                ", colorSeleccionado='" + colorSeleccionado + '\'' +
                 '}';
     }
 }

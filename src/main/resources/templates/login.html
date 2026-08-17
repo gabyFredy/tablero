@@ -34,13 +34,107 @@
             background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
             border: none;
         }
+        /* ========== ESTILOS DEL FOOTER ========== */
         .footer {
             background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
-            padding: 2rem 0;
-            margin-top: 3rem;
+            color: #ffffff;
+            padding: 3rem 0 1.5rem;
+            margin-top: 4rem;
         }
-        .footer .text-muted { color: rgba(255,255,255,0.7) !important; }
-        .footer strong, .footer a { color: white !important; }
+
+        .footer-brand {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .footer-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.25s ease;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .footer-links li i {
+            margin-top: 0.15rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+
+        .footer-links li a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .footer {
+                padding: 2rem 0 1rem;
+            }
+            .row > div {
+                margin-bottom: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -55,13 +149,13 @@
                         <p class="text-muted">Sistema Integral de Gestión Municipal</p>
                     </div>
                     
-                    <div th:if="${param.error}" class="alert alert-danger">
+                    <!-- <div th:if="${param.error}" class="alert alert-danger">
                         <i class="bi bi-exclamation-triangle"></i> Usuario o contraseña incorrectos
-                    </div>
+                    </div> -->
                     
-                    <div th:if="${param.logout}" class="alert alert-success">
+                    <!-- <div th:if="${param.logout}" class="alert alert-success">
                         <i class="bi bi-check-circle"></i> Sesión cerrada correctamente
-                    </div>
+                    </div> -->
 
                     <div th:if="${param.noVerificado}" class="alert alert-warning">
                         <i class="bi bi-envelope-exclamation"></i> Tu cuenta aún no ha sido verificada. Revisa tu correo o solicita un nuevo enlace.

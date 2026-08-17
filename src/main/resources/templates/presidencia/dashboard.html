@@ -59,46 +59,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
-        /* Tooltip personalizado */
-        [data-tooltip] {
-            position: relative;
-            cursor: help;
-        }
-        
-        [data-tooltip]:before {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2c3e50;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            display: none;
-            z-index: 10;
-            margin-bottom: 5px;
-        }
-        
-        [data-tooltip]:hover:before {
-            display: block;
-        }
-        
-        /* Badge último acceso */
-        .badge-last-access {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ffc107;
-            color: #000;
-            font-size: 0.7rem;
-            padding: 4px 8px;
-            border-radius: 20px;
-        }
-        
-        /* Dropdown de usuario mejorado */
+        /* Dropdown de usuario */
         .dropdown-user {
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
@@ -122,27 +83,109 @@
             color: #ffffff;
         }
         
-        /* Footer */
+        /* ========== ESTILOS DEL FOOTER ========== */
         .footer {
             background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
-            border-top: 1px solid #dee2e6;
+            color: #ffffff;
+            padding: 3rem 0 1.5rem;
             margin-top: 4rem;
-            padding: 2rem 0;
+        }
+
+        .footer-brand {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .footer-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.25s ease;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .footer-links li i {
+            margin-top: 0.15rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+
+        .footer-links li a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .footer {
+                padding: 2rem 0 1rem;
+            }
+            .row > div {
+                margin-bottom: 1.5rem;
+            }
         }
         
-        /* Botón Volver inline */
-        .btn-volver {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-        }
-        
-        .btn-volver:hover {
-            background: rgba(255,255,255,0.3);
-            color: white;
-            transform: translateY(-2px);
-        }
-        
+        /* ============ BREADCRUMB (segundo nav) ============ */
         .breadcrumb-custom {
             background: white;
             padding: 0.75rem 1.25rem;
@@ -178,7 +221,7 @@
 <body>
     <div class="container my-4">
 
-        <!-- ========== NAVBAR CON PERFIL Y CIERRE DE SESIÓN ========== -->
+        <!-- ========== NAVBAR PRINCIPAL ========== -->
         <nav class="navbar navbar-dark navbar-custom mb-4 p-3">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/inicio">
@@ -186,18 +229,9 @@
                     <strong>OmniView</strong> - Gobierno Municipal
                 </a>
                 
-                <div class="d-flex align-items-center">
-                    <!-- Botón Volver al Inicio integrado en navbar -->
-                    <a href="/" class="btn btn-volver btn-sm me-3">
-                        <i class="bi bi-arrow-left"></i> Volver al Inicio
-                    </a>
-                    
-                    <!-- Nombre del usuario -->
-                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
-                        Usuario
-                    </span>
-                    
-                    <!-- Icono de perfil con menú desplegable -->
+                <div class="d-flex align-items-center">   
+                    <div th:replace="~{fragmentos/notificaciones :: notificaciones}"></div>              
+                    <!-- Menú de usuario -->
                     <div class="dropdown">
                         <button class="btn btn-light rounded-circle d-flex align-items-center justify-content-center" 
                                 style="width: 40px; height: 40px;" 
@@ -222,9 +256,9 @@
                                 </a>
                             </li>
                             <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                            <a class="dropdown-item" href="/admin/usuarios">
-                                <i class="bi bi-people-fill"></i> Administrar Usuarios
-                            </a>
+                                <a class="dropdown-item" href="/admin/usuarios">
+                                    <i class="bi bi-people-fill"></i> Administrar Usuarios
+                                </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
@@ -236,16 +270,24 @@
                             </li>
                         </ul>
                     </div>
+
+                    <!-- Nombre del usuario -->
+                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
+                        Usuario
+                    </span>
                 </div>
             </div>
         </nav>
          
-        <nav aria-label="breadcrumb-custom" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/inicio">Inicio</a></li>
-                <li class="breadcrumb-item active" aria-current="page" th:text="${seccionNombre}">Sección</li>
-            </ol>
-        </nav>
+        <!-- ========== SEGUNDO NAV: RUTA / UBICACIÓN ========== -->
+        <div class="breadcrumb-custom mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/inicio"><i class="bi bi-house-door"></i> Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${seccionNombre}">Sección</li>
+                </ol>
+            </nav>
+        </div>
 
         <!-- Encabezado de la sección -->
         <div class="header-bar p-5 mb-5 text-center">
@@ -298,7 +340,7 @@
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
                         <i class="bi bi-megaphone-fill text-info" style="font-size: 2.5rem;"></i>
-                        <h5 class="card-title mt-3 mb-2">Comunicacion Social Responsable</h5>
+                        <h5 class="card-title mt-3 mb-2">Comunicación Social Responsable</h5>
                         <a th:href="@{/{seccion}/comunicacion-social (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
                             <i class="bi bi-arrow-right-circle"></i> Acceder
                         </a>
@@ -306,12 +348,12 @@
                 </div>
             </div>
 
-            <!-- Seguridad Publica -->
+            <!-- Seguridad Pública -->
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
                         <i class="bi bi-shield-lock-fill text-danger" style="font-size: 2.5rem;"></i>
-                        <h5 class="card-title mt-3 mb-2">Consejo Municipal de Seguridad Publica</h5>
+                        <h5 class="card-title mt-3 mb-2">Consejo Municipal de Seguridad Pública</h5>
                         <a th:href="@{/{seccion}/seguridad-publica (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
                             <i class="bi bi-arrow-right-circle"></i> Acceder
                         </a>
@@ -319,12 +361,12 @@
                 </div>
             </div>
 
-            <!-- Planeacion -->
+            <!-- Planeación -->
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
                         <i class="bi bi-bar-chart-steps text-warning" style="font-size: 2.5rem;"></i>
-                        <h5 class="card-title mt-3 mb-2">Planeacion y Evaluacion de la Administracion Municipal</h5>
+                        <h5 class="card-title mt-3 mb-2">Planeación y Evaluación de la Administración Municipal</h5>
                         <a th:href="@{/{seccion}/planeacion (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
                             <i class="bi bi-arrow-right-circle"></i> Acceder
                         </a>
@@ -332,12 +374,12 @@
                 </div>
             </div>
 
-            <!-- Atencion Mujeres -->
+            <!-- Atención Mujeres -->
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
                         <i class="bi bi-gender-female" style="font-size: 2.5rem; color: #d63384;"></i>
-                        <h5 class="card-title mt-3 mb-2">Modelo de Atencion Integral a Mujeres</h5>
+                        <h5 class="card-title mt-3 mb-2">Modelo de Atención Integral a Mujeres</h5>
                         <a th:href="@{/{seccion}/atencion-mujeres (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
                             <i class="bi bi-arrow-right-circle"></i> Acceder
                         </a>
@@ -345,12 +387,12 @@
                 </div>
             </div>
 
-            <!-- Proteccion Infantil -->
+            <!-- Protección Infantil -->
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">
                     <div class="card-body text-center p-4">
                         <i class="bi bi-emoji-smile-fill text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="card-title mt-3 mb-2">Proteccion y Bienestar de Niñas, Niños y Adolescentes</h5>
+                        <h5 class="card-title mt-3 mb-2">Protección y Bienestar de Niñas, Niños y Adolescentes</h5>
                         <a th:href="@{/{seccion}/proteccion-infantil (seccion=${seccion})}" class="btn btn-primary btn-custom w-100">
                             <i class="bi bi-arrow-right-circle"></i> Acceder
                         </a>
