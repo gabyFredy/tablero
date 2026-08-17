@@ -10,7 +10,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.username:}")
+    @Value("${SENDGRID_FROM_EMAIL:fernandogglucena@gmail.com}")
     private String fromEmail;
 
     @Value("${spring.mail.password:}")
