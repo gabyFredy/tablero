@@ -98,7 +98,6 @@ public class MainController {
         return "inicio";
     }
 
-    
     @GetMapping("/{seccion}/dashboard")
     public String dashboard(@PathVariable String seccion, Model model, Authentication auth, RedirectAttributes ra) {
         if (!tieneAccesoASeccion(seccion, auth)) {
@@ -184,6 +183,8 @@ public class MainController {
             datos.put("titulo", item.getTitulo());
             datos.put("tiempo", item.getTiempo());
             datos.put("porcentaje", item.getPorcentaje() != null ? item.getPorcentaje() : 0.0);
+            // ✅ AGREGADO: porcentaje formateado a 2 decimales
+            datos.put("porcentajeFormateado", item.getPorcentaje() != null ? String.format("%.2f", item.getPorcentaje()) : "0.00");
             datos.put("programa", item.getPrograma());
             datos.put("orden", item.getOrden());
             datos.put("colorSeleccionado", item.getColorSeleccionado());
@@ -387,6 +388,12 @@ public class MainController {
                 ra.addFlashAttribute("error", "❌ Registro no pertenece a esta sección");
                 return "redirect:/" + seccion + "/" + tema;
             }
+            
+            // ✅ AGREGADO: Formatear porcentaje a 2 decimales para mostrar en el formulario
+            if (main.getPorcentaje() != null) {
+                main.setPorcentaje(Math.round(main.getPorcentaje() * 100.0) / 100.0);
+            }
+            
             model.addAttribute("main", main);
             model.addAttribute("accion", "Editar");
             model.addAttribute("seccionUrl", seccion);
@@ -456,7 +463,7 @@ public class MainController {
         return "redirect:/" + seccion + "/" + tema;
     }
 
-        @PostMapping("/{seccion}/{tema}/eliminar/{id}")
+    @PostMapping("/{seccion}/{tema}/eliminar/{id}")
     public String eliminarTema(@PathVariable String seccion, @PathVariable String tema,
                                @PathVariable String id, RedirectAttributes ra, Authentication auth) {
         if (!tieneAccesoASeccion(seccion, auth)) {
@@ -650,6 +657,85 @@ public class MainController {
             }
         }
         return false;
+    }
+
+    // ==================== MOVER INDICADORES ====================
+    @PostMapping("/{seccion}/{tema}/mover/{id}/{direccion}")
+    @ResponseBody
+    public Map<String, Object> moverIndicador(@PathVariable String seccion,
+                                            @PathVariable String tema,
+                                            @PathVariable String id,
+                                            @PathVariable String direccion,
+                                            Authentication auth) {
+        Map<String, Object> respuesta = new HashMap<>();
+        
+        if (!esAdmin()) {
+            respuesta.put("success", false);
+            respuesta.put("mensaje", "Acceso denegado");
+            return respuesta;
+        }
+        
+        try {
+            String coleccion = seccion + "_" + tema;
+            Optional<Main> mainOpt = mainRepository.findById(id);
+            
+            if (!mainOpt.isPresent()) {
+                respuesta.put("success", false);
+                respuesta.put("mensaje", "Indicador no encontrado");
+                return respuesta;
+            }
+            
+            Main indicador = mainOpt.get();
+            if (!coleccion.equals(indicador.getSeccion())) {
+                respuesta.put("success", false);
+                respuesta.put("mensaje", "Indicador no pertenece a esta sección");
+                return respuesta;
+            }
+            
+            // Obtener todos los indicadores de la sección ordenados
+            List<Main> todos = mainRepository.findBySeccionOrderByOrdenAsc(coleccion);
+            int indiceActual = -1;
+            
+            for (int i = 0; i < todos.size(); i++) {
+                if (todos.get(i).getId().equals(id)) {
+                    indiceActual = i;
+                    break;
+                }
+            }
+            
+            if (indiceActual == -1) {
+                respuesta.put("success", false);
+                respuesta.put("mensaje", "Indicador no encontrado en la lista");
+                return respuesta;
+            }
+            
+            int nuevoIndice = direccion.equals("arriba") ? indiceActual - 1 : indiceActual + 1;
+            
+            if (nuevoIndice < 0 || nuevoIndice >= todos.size()) {
+                respuesta.put("success", false);
+                respuesta.put("mensaje", "No se puede mover más en esa dirección");
+                return respuesta;
+            }
+            
+            Main otro = todos.get(nuevoIndice);
+            int ordenActual = indicador.getOrden() != null ? indicador.getOrden() : 0;
+            int otroOrden = otro.getOrden() != null ? otro.getOrden() : 0;
+            
+            indicador.setOrden(otroOrden);
+            otro.setOrden(ordenActual);
+            
+            mainRepository.save(indicador);
+            mainRepository.save(otro);
+            
+            respuesta.put("success", true);
+            respuesta.put("mensaje", "Indicador movido correctamente");
+            
+        } catch (Exception e) {
+            respuesta.put("success", false);
+            respuesta.put("mensaje", "Error: " + e.getMessage());
+        }
+        
+        return respuesta;
     }
 
     private String getNombreSeccion(String clave) {

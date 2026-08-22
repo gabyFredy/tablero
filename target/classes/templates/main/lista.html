@@ -519,11 +519,12 @@
                                 <div class="d-flex align-items-center">
                                     <div class="progress flex-grow-1 me-2" style="height: 8px; border-radius: 10px; background: #e9ecef;">
                                         <div class="progress-bar" role="progressbar" 
-                                            th:style="'width: ' + ${item.porcentaje} + '%'"
-                                            th:classappend="${item.porcentaje >= 70 ? 'progress-bar-verde' : (item.porcentaje >= 30 ? 'progress-bar-amarillo' : 'progress-bar-rojo')}">
+                                            th:style="'width: ' + ${item.porcentaje != null ? (item.porcentaje > 100 ? 100 : item.porcentaje) : 0} + '%'"
+                                            th:classappend="${item.porcentaje != null and item.porcentaje >= 70 ? 'progress-bar-verde' : 
+                                                        (item.porcentaje != null and item.porcentaje >= 30 ? 'progress-bar-amarillo' : 'progress-bar-rojo')}">
                                         </div>
                                     </div>
-                                    <span class="badge bg-secondary" th:text="${item.porcentaje} + '%'">0%</span>
+                                    <span class="badge bg-secondary" th:text="${#numbers.formatDecimal(item.porcentaje != null ? item.porcentaje : 0, 0, 'COMMA', 2, 'POINT')} + '%'">0.00%</span>
                                 </div>
                             </td>
                             

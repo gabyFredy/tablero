@@ -26,6 +26,9 @@ public interface MainRepository extends MongoRepository<Main, String> {
     // 🔥 NUEVO: Buscar por sección y orden
     List<Main> findBySeccionOrderByOrdenAsc(String seccion);
 
+    // 🔥 NUEVO: Buscar por sección y orden
+    List<Main> findBySeccionOrderByOrdenDesc(String seccion);
+
     // NUEVO: Buscar el máximo orden de una sección
     @Query(value = "{ 'seccion': ?0 }", fields = "{ 'orden': 1 }", sort = "{ 'orden': -1 }")
     List<Main> findTopBySeccionOrderByOrdenDesc(String seccion, Pageable pageable);

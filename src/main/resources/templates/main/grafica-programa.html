@@ -83,7 +83,7 @@
             color: #ffffff;
         }
         
-        /* BREADCRUMB */
+        /* ============ BREADCRUMB (segundo nav) ============ */
         .breadcrumb-custom {
             background: white;
             padding: 0.75rem 1.25rem;
@@ -94,6 +94,9 @@
         
         .breadcrumb-custom .breadcrumb {
             margin-bottom: 0;
+            background: transparent;
+            padding: 0;
+            font-size: 0.875rem;
         }
         
         .breadcrumb-custom .breadcrumb-item a {
@@ -173,37 +176,96 @@
             padding: 0.3rem 0.6rem;
         }
 
-        /* ============ ESTILOS DEL FOOTER ============ */
+                /* ========== ESTILOS DEL FOOTER ========== */
         .footer {
-            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%) !important;
-            border-top: 1px solid rgba(255,255,255,0.15) !important;
-            margin-top: 4rem !important;
-            padding: 2.5rem 0 !important;
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            color: #ffffff;
+            padding: 3rem 0 1.5rem;
+            margin-top: 4rem;
         }
-        
-        .footer .text-muted,
-        .footer small {
-            color: rgba(255,255,255,0.7) !important;
+
+        .footer-brand {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
         }
-        
-        .footer strong {
-            color: #ffffff !important;
+
+        .footer-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
         }
-        
-        .footer a {
-            color: rgba(255,255,255,0.7) !important;
-            text-decoration: none !important;
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.25s ease;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .footer-links li i {
+            margin-top: 0.15rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
             transition: color 0.25s ease;
         }
-        
-        .footer a:hover {
-            color: #ffffff !important;
-            text-decoration: underline !important;
+
+        .footer-links li a:hover {
+            color: #ffffff;
+            text-decoration: underline;
         }
-        
-        .footer i.bi {
-            margin-right: 0.4rem;
-            opacity: 0.85;
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
         }
 
         /* RESPONSIVE */
@@ -224,21 +286,22 @@
     <div class="container my-4">
 
         <!-- ========== NAVBAR PRINCIPAL ========== -->
-        <nav class="navbar navbar-dark navbar-custom mb-4">
+        <nav class="navbar navbar-dark navbar-custom mb-4 p-3">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/inicio">
                     <i class="bi bi-eye fs-4"></i>
-                    <strong>OmniView</strong> <span class="d-none d-sm-inline">- Gobierno Municipal</span>
+                    <strong>OmniView</strong> - Gobierno Municipal
                 </a>
                 
-                <div class="navbar-user">
-                    <span class="user-name d-none d-md-block" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
-                        Usuario
-                    </span>
-                    
+                <div class="d-flex align-items-center">   
+                    <div th:replace="~{fragmentos/notificaciones :: notificaciones}"></div>              
+                    <!-- Menú de usuario -->
                     <div class="dropdown">
-                        <button class="btn-user" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle fs-5"></i>
+                        <button class="btn btn-light rounded-circle d-flex align-items-center justify-content-center" 
+                                style="width: 40px; height: 40px;" 
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false">
+                            <i class="bi bi-person-circle fs-4"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-user">
                             <li class="user-info">
@@ -271,23 +334,23 @@
                             </li>
                         </ul>
                     </div>
+
+                    <!-- Nombre del usuario -->
+                    <span class="text-white me-3" th:text="${#authentication != null ? #authentication.name : 'Invitado'}">
+                        Usuario
+                    </span>
                 </div>
             </div>
         </nav>
 
-        <!-- ========== BREADCRUMB ========== -->
+        <!-- ========== SEGUNDO NAV: RUTA / UBICACIÓN ========== -->
         <div class="breadcrumb-custom mb-4">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a href="/inicio"><i class="bi bi-house-door"></i> Inicio</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a th:href="@{/{seccionUrl}/{temaUrl} (seccionUrl=${seccionUrl}, temaUrl=${temaUrl})}">
-                        <span th:text="${tituloPagina}">Indicadores</span>
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">Gráfica</li>
-            </ol>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/inicio"><i class="bi bi-house-door"></i> Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${seccionNombre}">Sección</li>
+                </ol>
+            </nav>
         </div>
 
         <!-- ========== ENCABEZADO ========== -->
