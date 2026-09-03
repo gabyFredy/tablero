@@ -797,8 +797,8 @@ public class MainController {
             case "desarrollo-social-incluyente" -> "Desarrollo Social Incluyente y Calidad de Vida";
             case "accion-migrante" -> "Accion Migrante y Asuntos Religiosos";
             case "defensa-justicia-legalidad" -> "Defensa con justicia y Legalidad";
-            case "fortalecer-fomentar-proteger" -> "Servicios para Fortalecer, Fomentar y Proteger el Sano Desarrollo Fisico, Mental y Emocional de las Familias del Municipio de Cuernavaca";
-            case "servicios-basicos" -> "Servicios Basicos de Asistencia Social y de Apoyo para el Desarrollo Integral de las Familias y de los Grupos Vulnerables del Municipio de Cuernavaca";
+            case "fortalecer-fomentar-proteger" -> "Servicios para Fortalecer, Fomentar y Proteger el Sano Desarrollo Fisico,\n Mental y Emocional de las Familias del Municipio de Cuernavaca";
+            case "servicios-basicos" -> "Servicios Basicos de Asistencia Social y de Apoyo para el Desarrollo Integral de las Familias y\n de los Grupos Vulnerables del Municipio de Cuernavaca";
             case "prodder" -> "PRODDER";
             case "jubilados-pensionados" -> "Jubilados y Pensionados";
             case "conagua" -> "CONAGUA";

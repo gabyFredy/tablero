@@ -454,7 +454,7 @@
         <!-- Navegación -->
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
             <div class="d-flex align-items-center gap-3">
-                <h2 class="h4 mb-0 text-primary" th:text="${tituloPagina}">Título del Tema</h2>
+                <h2 class="h4 mb-0 text-primary" style="white-space: pre-line" th:text="${tituloPagina}">Título del Tema</h2>
                 <span class="badge-total" id="totalRegistros" th:text="'Total: ' + ${#lists.size(mainList)}">
                     Total: 0
                 </span>
@@ -511,7 +511,7 @@
                             <td>
                                 <strong th:text="${item.titulo}">Nombre</strong>
                             </td>
-                            <td th:text="${item.programa}">Programa</td>
+                            <td th:utext="${#strings.replace(#strings.replace(item.programa, ' Mental', '<br>Mental'), 'y ', 'y<br>')}"style="font-size: 0.85rem;">Programa</td>
                             <td>
                                 <span class="badge bg-info text-dark" th:text="${item.tiempo}">Periodo</span>
                             </td>
