@@ -95,9 +95,9 @@ public class UsuarioService implements UserDetailsService {
             System.out.println("Token: " + usuario.getTokenVerificacion());
             
             String urlVerificacion = appUrl + "/verificar-correo?token=" + usuario.getTokenVerificacion();
-            String asunto = "🔐 Verifica tu correo electrónico - OmniView";
+            String asunto = "🔐 Verifica tu correo electrónico - Tablero de Control";
             String mensaje = "Hola " + usuario.getNombreCompleto() + ",\n\n" +
-                             "Has sido registrado en OmniView por el administrador.\n\n" +
+                             "Has sido registrado en Tablero de Control por el administrador.\n\n" +
                              "Para poder iniciar sesión, por favor verifica tu correo haciendo clic en el siguiente enlace:\n\n" +
                              urlVerificacion + "\n\n" +
                              "Tus credenciales de acceso son:\n" +
@@ -106,7 +106,7 @@ public class UsuarioService implements UserDetailsService {
                              "⚠️ Por seguridad, te recomendamos cambiar tu contraseña después de iniciar sesión.\n\n" +
                              "Si no solicitaste este registro, ignora este mensaje.\n\n" +
                              "Saludos,\n" +
-                             "Equipo OmniView";
+                             "Equipo Tablero de Control";
             
             System.out.println("Mensaje: " + mensaje);
             boolean enviado = emailService.enviarCorreo(usuario.getEmail(), asunto, mensaje);
@@ -215,7 +215,7 @@ public class UsuarioService implements UserDetailsService {
             user.setUsername("usuario");
             user.setPassword(passwordEncoder.encode("usuario123"));
             user.setNombreCompleto("Usuario Normal");
-            user.setEmail("usuario@omniview.com");
+            user.setEmail("usuario@Tablero de Control.com");
             user.setRol("ROLE_USUARIO");
             user.setEmailVerificado(true);
             user.setEnabled(true);
@@ -268,7 +268,7 @@ public class UsuarioService implements UserDetailsService {
             usuarioRepository.save(usuario);
             
             String url = appUrl + "/reset-password?token=" + token;
-            String asunto = "🔑 Recuperación de contraseña - OmniView";
+            String asunto = "🔑 Recuperación de contraseña - Tablero de Control";
             String mensaje = "Hola " + usuario.getNombreCompleto() + ",\n\n" +
                              "Hemos recibido una solicitud para restablecer tu contraseña.\n\n" +
                              "Haz clic en el siguiente enlace para crear una nueva contraseña:\n" +
@@ -276,7 +276,7 @@ public class UsuarioService implements UserDetailsService {
                              "Si no solicitaste esto, ignora este mensaje.\n\n" +
                              "El enlace expirará en 24 horas.\n\n" +
                              "Saludos,\n" +
-                             "Equipo OmniView";
+                             "Equipo Tablero de Control";
             boolean enviado = emailService.enviarCorreo(usuario.getEmail(), asunto, mensaje);
             System.out.println(enviado ? "✅ Correo de recuperación enviado a: " + usuario.getEmail() : "❌ No se pudo enviar el correo de recuperación");
             return enviado;
@@ -330,14 +330,14 @@ public class UsuarioService implements UserDetailsService {
             System.out.println("Token: " + usuario.getTokenVerificacion());
             
             String urlVerificacion = appUrl + "/verificar-correo?token=" + usuario.getTokenVerificacion();
-            String asunto = "🔐 Verifica tu correo electrónico - OmniView";
+            String asunto = "🔐 Verifica tu correo electrónico - Tablero de Control";
             String mensaje = "Hola " + usuario.getNombreCompleto() + ",\n\n" +
                              "Has solicitado reenviar el correo de verificación.\n\n" +
                              "Para poder iniciar sesión, por favor verifica tu correo haciendo clic en el siguiente enlace:\n\n" +
                              urlVerificacion + "\n\n" +
                              "⚠️ Si no solicitaste este reenvío, ignora este mensaje.\n\n" +
                              "Saludos,\n" +
-                             "Equipo OmniView";
+                             "Equipo Tablero de Control";
             
             boolean enviado = emailService.enviarCorreo(usuario.getEmail(), asunto, mensaje);
             if (enviado) {

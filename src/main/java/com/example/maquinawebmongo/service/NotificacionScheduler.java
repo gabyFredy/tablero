@@ -53,7 +53,7 @@ public class NotificacionScheduler {
                 List<Usuario> usuarios = usuarioService.listarTodos();
                     
                     for (Usuario usuario : usuarios) {
-                        if (usuario.isEmailVerificado() && usuario.getEmail() != null && !usuario.getEmail().contains("omniview.com")) {
+                        if (usuario.isEmailVerificado() && usuario.getEmail() != null && !usuario.getEmail().contains("Tablero de Control.com")) {
                             String url = "/" + item.getSeccion().replace("_", "/") + "/editar/" + item.getId();
 
                             Notificacion notificacion = new Notificacion(
@@ -67,14 +67,14 @@ public class NotificacionScheduler {
                             notificacion.setTipoNotificacion("EDICION_DISPONIBLE");
                             notificacionRepository.save(notificacion);
                             
-                            String asunto = "🔔 OmniView - Indicador disponible para edición";
+                            String asunto = "🔔 Tablero de Control - Indicador disponible para edición";
                             String mensaje = "Hola " + usuario.getNombreCompleto() + ",\n\n" +
                                              "El indicador '" + item.getTitulo() + "' ya puede ser modificado.\n" +
                                              "Del programa '" + item.getPrograma() + "'.\n" +   
                                              "Accede al siguiente enlace para editarlo:\n" +
                                              appUrl + url + "\n\n" +  // ✅ USAMOS VARIABLE
                                              "Saludos,\n" +
-                                             "Equipo OmniView";
+                                             "Equipo Tablero de Control";
                             boolean enviado = emailService.enviarCorreo(usuario.getEmail(), asunto, mensaje);
                             if (enviado){
                                 System.out.println("✅ Correo enviado a: " + usuario.getEmail());

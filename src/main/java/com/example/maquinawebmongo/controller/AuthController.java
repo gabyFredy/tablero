@@ -193,7 +193,7 @@ public class AuthController {
     public String testEmail(@RequestParam String email) {
         try {
             System.out.println("=== TEST EMAIL ===");
-            String asunto = "🧪 Correo de prueba - OmniView";
+            String asunto = "🧪 Correo de prueba - Tablero de Control";
             String mensaje = "Este es un correo de prueba para verificar que la configuración de correo funciona correctamente.";
             boolean enviado = emailService.enviarCorreo(email, asunto, mensaje);
             return enviado ? "✅ Correo enviado a: " + email : "❌ No se pudo enviar el correo a: " + email;

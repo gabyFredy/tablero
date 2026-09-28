@@ -45,13 +45,13 @@ public class NotificacionService {
             notificacionRepository.save(notificacion);
 
             if (usuario.getEmail() != null && !usuario.getEmail().isEmpty()) {
-                String asunto = "🔔 OmniView - Indicador disponible para edición";
+                String asunto = "🔔 Tablero de Control - Indicador disponible para edición";
                 String mensaje = "Hola " + usuario.getNombreCompleto() + ",\n\n" +
                                  "El indicador '" + titulo + "' ya puede ser modificado.\n" +
                                  "Accede al siguiente enlace para editarlo:\n" +
                                  url + "\n\n" +
                                  "Saludos,\n" +
-                                 "Equipo OmniView";
+                                 "Equipo Tablero de Control";
                 emailService.enviarCorreo(usuario.getEmail(), asunto, mensaje);
             }
         }

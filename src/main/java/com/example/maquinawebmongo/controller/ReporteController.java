@@ -127,7 +127,7 @@ public class ReporteController {
         Workbook workbook = new XSSFWorkbook();
         
         // Hoja 1: Datos del reporte
-        Sheet sheet = workbook.createSheet("Reporte_OmniView");
+        Sheet sheet = workbook.createSheet("Reporte_Tablero de Control");
 
         CellStyle headerStyle = crearEstiloHeader(workbook);
         CellStyle verdeStyle = crearEstiloColor(workbook, IndexedColors.GREEN);
@@ -187,7 +187,7 @@ public class ReporteController {
         agregarGraficaExcel(workbook, registros);
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=reporte_omniview_" + System.currentTimeMillis() + ".xlsx");
+        response.setHeader("Content-Disposition", "attachment; filename=reporte_Tablero de Control_" + System.currentTimeMillis() + ".xlsx");
         workbook.write(response.getOutputStream());
         workbook.close();
         
@@ -208,7 +208,7 @@ public class ReporteController {
         List<Main> registros = obtenerRegistros(seccion, color);
 
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=reporte_omniview_" + System.currentTimeMillis() + ".pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=reporte_Tablero de Control_" + System.currentTimeMillis() + ".pdf");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
@@ -218,7 +218,7 @@ public class ReporteController {
 
         // ============ TÍTULO ============
         PdfFont titleFont = PdfFontFactory.createFont();
-        String tituloReporte = "📊 Reporte OmniView";
+        String tituloReporte = "📊 Reporte Tablero de Control";
         if (seccion != null && !seccion.isEmpty() && !seccion.equals("todos")) {
             tituloReporte += " - " + seccion.toUpperCase();
         }
