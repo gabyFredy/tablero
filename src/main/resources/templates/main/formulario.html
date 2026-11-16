@@ -210,18 +210,18 @@
                     </select>
                 </div>
 
-                <!-- ============ PORCENTAJE CON 2 DECIMALES Y SIN LÍMITE ============ -->
+                <!-- ============ PORCENTAJE CON 2 DECIMALES Y NEGATIVOS HASTA 4 DÍGITOS ============ -->
                 <div class="mb-4">
                     <label for="porcentaje" class="form-label fw-bold">
                         Porcentaje de Avance (%)
                         <span class="badge bg-info ms-2" style="font-size: 0.65rem;">
-                            <i class="bi bi-info-circle"></i> 2 decimales
+                            <i class="bi bi-info-circle"></i> 2 decimales · admite negativos
                         </span>
                     </label>
                     <div class="input-group">
                         <input type="number" id="porcentaje" th:field="*{porcentaje}" 
                             class="form-control form-control-lg" 
-                            min="0" step="0.01" 
+                            min="-9999.99" step="0.01" 
                             placeholder="0.00"
                             oninput="validarDosDecimales(this)">
                         <span class="input-group-text fw-bold">%</span>
@@ -231,7 +231,7 @@
                     </div>
                     <div class="d-flex justify-content-between mt-1">
                         <small class="text-muted">
-                            <i class="bi bi-info-circle"></i> Ingresa valores con hasta 2 decimales (ej: 75.50)
+                            <i class="bi bi-info-circle"></i> Hasta 2 decimales. Negativos permitidos (ej: -150.25)
                         </small>
                         <small class="text-muted" id="porcentajeLabel">0.00%</small>
                     </div>
@@ -324,9 +324,10 @@
                 }
             }
             
+            // ✅ Se permite negativo, solo se limita el mínimo a -9999.99
             let num = parseFloat(input.value);
             if (!isNaN(num)) {
-                if (num < 0) input.value = '0';
+                if (num < -9999.99) input.value = '-9999.99';
             }
             
             actualizarProgreso();
@@ -339,12 +340,11 @@
         
         function actualizarProgreso() {
             let valor = parseFloat(porcentajeInput.value) || 0;
-            if (valor < 0) valor = 0;
             
             const valorFormateado = valor.toFixed(2);
             
-            // ✅ Barra muestra hasta 100% (visual)
-            let porcentajeBarra = Math.min(valor, 100);
+            // ✅ Barra: negativo → 0%, >100 → 100% (visual). El valor real se conserva.
+            let porcentajeBarra = Math.min(Math.max(valor, 0), 100);
             progresoBar.style.width = porcentajeBarra + '%';
             
             if (porcentajeLabel) {
@@ -367,7 +367,7 @@
 
         porcentajeInput.addEventListener('blur', function() {
             let valor = parseFloat(this.value);
-            if (!isNaN(valor) && valor > 0) {
+            if (!isNaN(valor) && valor !== 0) {
                 this.value = valor.toFixed(2);
             } else if (!isNaN(valor) && valor === 0) {
                 this.value = '0.00';
@@ -429,6 +429,7 @@
             let valor = parseFloat(porcentaje.value);
             
             if (!isNaN(valor)) {
+                if (valor < -9999.99) valor = -9999.99;
                 porcentaje.value = valor.toFixed(2);
             } else {
                 porcentaje.value = '0.00';
