@@ -229,20 +229,17 @@
             color: #dc3545;
         }
         
+        /* Badge de resultados: ahora va debajo del input, no encima */
         .buscador-container .badge-resultados {
-            position: absolute;
-            right: 110px;
-            top: 50%;
-            transform: translateY(-50%);
+            display: none;
             background: #e9ecef;
             color: #495057;
-            font-size: 0.75rem;
-            padding: 2px 12px;
+            font-size: 0.8rem;
+            padding: 4px 14px;
             border-radius: 12px;
-            display: none;
-            z-index: 5;
+            font-weight: 500;
         }
-        
+
         .buscador-container .badge-resultados.visible {
             display: inline-block;
         }
@@ -805,23 +802,25 @@
                                 <i class="bi bi-search"></i>
                             </span>
                             <input type="text" id="buscadorGlobal" 
-                                   class="form-control" 
-                                   placeholder="🔍 Buscar por título, programa o sección..."
-                                   autocomplete="off">
+                                class="form-control" 
+                                placeholder="🔍 Buscar por título, programa o sección..."
+                                autocomplete="off">
                             <button class="btn-limpiar" type="button" id="btnLimpiarBusqueda">
                                 <i class="bi bi-x-circle-fill"></i>
                             </button>
-                            <span class="badge-resultados" id="badgeResultados">
-                                <span id="numResultados">0</span>
-                            </span>
                             <button class="btn-buscar" type="button" id="btnBuscar">
                                 <i class="bi bi-search"></i> Buscar
                             </button>
                         </div>
-                        <div class="text-start mt-2">
+
+                        <!-- Badge de resultados AHORA debajo del input, sin encimarse -->
+                        <div class="d-flex justify-content-between align-items-center mt-2">
                             <small class="text-muted">
                                 <i class="bi bi-info-circle"></i> Busca por título, programa o sección (ej: seguridad, obras, DIF)
                             </small>
+                            <span class="badge-resultados" id="badgeResultados">
+                                <i class="bi bi-list-ul"></i> <span id="numResultados">0</span> resultados
+                            </span>
                         </div>
                         
                         <!-- Contenedor de resultados con scroll -->
