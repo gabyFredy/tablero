@@ -100,19 +100,83 @@
             pointer-events: none;
         }
 
-        /* ============ ESTILOS DEL BUSCADOR ============ */
-        .buscador-container {
-            max-width: 700px;
-            margin: 0 auto;
+        /* ============ BOTÓN QUE ABRE EL MODAL ============ */
+        .btn-abrir-buscador {
+            background: rgba(255,255,255,0.95);
+            color: #0d6efd;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 32px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
             position: relative;
             z-index: 2;
         }
+
+        .btn-abrir-buscador:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            background: #ffffff;
+            color: #0a58ca;
+        }
+
+        /* ============ MODAL DEL BUSCADOR ============ */
+        .modal-buscador .modal-content {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-buscador .modal-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
+            color: white;
+            border: none;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-buscador .modal-header .modal-title {
+            font-weight: 600;
+        }
+
+        .modal-buscador .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+            opacity: 0.85;
+        }
+
+        .modal-buscador .modal-header .btn-close:hover {
+            opacity: 1;
+        }
+
+        .modal-buscador .modal-body {
+            padding: 1.5rem;
+            background: #f8f9fa;
+        }
+
+        .modal-buscador .modal-footer {
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 0.75rem 1.5rem;
+        }
+
+        /* ============ BUSCADOR DENTRO DEL MODAL ============ */
+        .buscador-container {
+            position: relative;
+        }
         
         .buscador-container .input-group {
-            background: rgba(255,255,255,0.95);
+            background: #ffffff;
             border-radius: 50px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            border: 2px solid #e9ecef;
+            transition: border-color 0.3s ease;
+        }
+
+        .buscador-container .input-group:focus-within {
+            border-color: #0d6efd;
         }
         
         .buscador-container .input-group-text {
@@ -124,8 +188,8 @@
         
         .buscador-container .form-control {
             border: none;
-            padding: 15px 20px;
-            font-size: 1.1rem;
+            padding: 14px 20px;
+            font-size: 1.05rem;
             background: transparent;
         }
         
@@ -142,7 +206,7 @@
             background: #0d6efd;
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 14px 28px;
             border-radius: 0 50px 50px 0;
             font-weight: 600;
             transition: background 0.3s ease;
@@ -156,7 +220,7 @@
             background: transparent;
             border: none;
             color: #6c757d;
-            padding: 15px 10px;
+            padding: 14px 10px;
             display: none;
             transition: color 0.3s ease;
         }
@@ -183,36 +247,58 @@
             display: inline-block;
         }
 
-        /* ============ RESULTADOS DE BÚSQUEDA ============ */
+        /* ============ RESULTADOS DE BÚSQUEDA (CON SCROLL) ============ */
         .resultados-container {
             display: none;
-            margin-top: 1.5rem;
-            text-align: left;
-            z-index: 2;
-            position: relative;
+            margin-top: 1.25rem;
         }
         
         .resultados-container.visible {
             display: block;
         }
+
+        /* Scroll interno para que no se alargue el modal */
+        .resultados-lista {
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        /* Scrollbar estilizada */
+        .resultados-lista::-webkit-scrollbar {
+            width: 8px;
+        }
+        .resultados-lista::-webkit-scrollbar-track {
+            background: #e9ecef;
+            border-radius: 10px;
+        }
+        .resultados-lista::-webkit-scrollbar-thumb {
+            background: #adb5bd;
+            border-radius: 10px;
+        }
+        .resultados-lista::-webkit-scrollbar-thumb:hover {
+            background: #6c757d;
+        }
         
         .resultado-card {
-            background: rgba(255,255,255,0.95);
+            background: #ffffff;
             border-radius: 12px;
-            padding: 1rem 1.5rem;
+            padding: 1rem 1.25rem;
             margin-bottom: 0.75rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             transition: all 0.3s ease;
             border-left: 4px solid #0d6efd;
             cursor: pointer;
             text-decoration: none;
             display: block;
+            color: inherit;
         }
         
         .resultado-card:hover {
-            transform: translateX(8px);
+            transform: translateX(6px);
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            background: white;
+            background: #f8f9fa;
+            color: inherit;
         }
         
         .resultado-card .titulo {
@@ -234,14 +320,6 @@
             border-radius: 12px;
         }
         
-        .resultado-card .color-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        
         .resultado-card .porcentaje-badge {
             font-weight: 600;
             font-size: 1.1rem;
@@ -250,7 +328,7 @@
         .sin-resultados {
             text-align: center;
             padding: 2rem;
-            color: rgba(255,255,255,0.9);
+            color: #6c757d;
         }
         
         .sin-resultados i {
@@ -265,9 +343,10 @@
         }
 
         .resultados-titulo {
-            color: rgba(255,255,255,0.85);
+            color: #495057;
             font-size: 0.9rem;
             margin-bottom: 0.75rem;
+            font-weight: 500;
         }
 
         /* ============ RESPONSIVE ============ */
@@ -280,14 +359,23 @@
                 font-size: 1.8rem;
             }
             
+            .btn-abrir-buscador {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+            
             .buscador-container .btn-buscar {
-                padding: 12px 20px;
+                padding: 12px 18px;
                 font-size: 0.9rem;
             }
             
             .buscador-container .form-control {
                 padding: 12px 15px;
                 font-size: 1rem;
+            }
+
+            .resultados-lista {
+                max-height: 300px;
             }
             
             .resultado-card {
@@ -298,6 +386,7 @@
                 font-size: 0.95rem;
             }
         }
+
         /* ========== ESTILOS DEL FOOTER ========== */
         .footer {
             background: linear-gradient(135deg, #0d6efd 0%, #084298 100%);
@@ -390,7 +479,6 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive */
         @media (max-width: 767px) {
             .footer {
                 padding: 2rem 0 1rem;
@@ -409,7 +497,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand" href="/inicio">
                     <i class="bi bi-eye fs-4"></i>
-                    <strong>Tablero de Control</strong> - Gobierno Municipal
+                    <strong>Tablero De Control</strong> - Gobierno Municipal
                 </a>
                 
                 <div class="d-flex align-items-center">
@@ -471,7 +559,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
-        <!-- ========== ENCABEZADO CON BUSCADOR ========== -->
+        <!-- ========== ENCABEZADO CON BOTÓN QUE ABRE EL MODAL ========== -->
         <div class="header-inicio mb-5 text-center">
             <i class="bi bi-building fs-1 d-inline-block mb-2"></i>
             <h1 class="display-5 fw-bold">Cuernavaca Gobierno Municipal</h1>
@@ -483,36 +571,20 @@
                 </span>
             </div>
 
-            <!-- ============ BUSCADOR GENERAL ============ -->
-            <div class="buscador-container mt-4">
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="bi bi-search"></i>
-                    </span>
-                    <input type="text" id="buscadorGlobal" 
-                           class="form-control" 
-                           placeholder="🔍 Buscar indicador por título, programa o sección..."
-                           autocomplete="off">
-                    <button class="btn-limpiar" type="button" id="btnLimpiarBusqueda">
-                        <i class="bi bi-x-circle-fill"></i>
-                    </button>
-                    <span class="badge-resultados" id="badgeResultados">
-                        <span id="numResultados">0</span>
-                    </span>
-                    <button class="btn-buscar" type="button" id="btnBuscar">
-                        <i class="bi bi-search"></i> Buscar
-                    </button>
-                </div>
-                <div class="text-start mt-2">
-                    <small class="text-white-50">
-                        <i class="bi bi-info-circle"></i> Busca por título, programa o sección (ej: seguridad, obras, DIF)
-                    </small>
-                </div>
-                
-                <!-- Contenedor de resultados -->
-                <div class="resultados-container" id="resultadosContainer">
-                    <div id="resultadosLista"></div>
-                </div>
+            <!-- Botón que abre el modal del buscador -->
+            <div class="mt-4">
+                <button type="button" 
+                        class="btn btn-abrir-buscador" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#modalBuscador">
+                    <i class="bi bi-search me-2"></i>
+                    Buscar indicador
+                </button>
+            </div>
+            <div class="mt-2">
+                <small class="text-white-50">
+                    <i class="bi bi-info-circle"></i> Busca por título, programa o sección
+                </small>
             </div>
         </div>
 
@@ -716,6 +788,57 @@
         </div>
     </div>
 
+    <!-- ========== MODAL DEL BUSCADOR ========== -->
+    <div class="modal fade modal-buscador" id="modalBuscador" tabindex="-1" aria-labelledby="modalBuscadorLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalBuscadorLabel">
+                        <i class="bi bi-search me-2"></i> Buscar indicador
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="buscador-container">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" id="buscadorGlobal" 
+                                   class="form-control" 
+                                   placeholder="🔍 Buscar por título, programa o sección..."
+                                   autocomplete="off">
+                            <button class="btn-limpiar" type="button" id="btnLimpiarBusqueda">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </button>
+                            <span class="badge-resultados" id="badgeResultados">
+                                <span id="numResultados">0</span>
+                            </span>
+                            <button class="btn-buscar" type="button" id="btnBuscar">
+                                <i class="bi bi-search"></i> Buscar
+                            </button>
+                        </div>
+                        <div class="text-start mt-2">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i> Busca por título, programa o sección (ej: seguridad, obras, DIF)
+                            </small>
+                        </div>
+                        
+                        <!-- Contenedor de resultados con scroll -->
+                        <div class="resultados-container" id="resultadosContainer">
+                            <div class="resultados-lista" id="resultadosLista"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ========== FOOTER ========== -->
     <div th:replace="~{fragmentos/footer :: footer}"></div>
 
@@ -735,6 +858,7 @@
             const numResultados = document.getElementById('numResultados');
             const resultadosContainer = document.getElementById('resultadosContainer');
             const resultadosLista = document.getElementById('resultadosLista');
+            const modalBuscadorEl = document.getElementById('modalBuscador');
 
             if (!inputBusqueda) {
                 console.warn('❌ No se encontró el input de búsqueda');
@@ -847,7 +971,7 @@
                 
                 resultadosLista.innerHTML = `
                     <div class="sin-resultados">
-                        <div class="spinner-border text-light spinner-custom" role="status">
+                        <div class="spinner-border text-primary spinner-custom" role="status">
                             <span class="visually-hidden">Buscando...</span>
                         </div>
                         <p class="mt-2">Buscando indicadores...</p>
@@ -924,15 +1048,38 @@
                 inputBusqueda.focus();
             });
 
-            // ==================== BUSCAR DESDE URL ====================
+            // ==================== AUTO-CERRAR MODAL AL CLIC EN RESULTADO ====================
+            resultadosLista.addEventListener('click', function(e) {
+                const card = e.target.closest('.resultado-card');
+                if (card && modalBuscadorEl) {
+                    const modalInstance = bootstrap.Modal.getInstance(modalBuscadorEl);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
+                }
+            });
+
+            // ==================== FOCO AUTOMÁTICO AL ABRIR MODAL ====================
+            if (modalBuscadorEl) {
+                modalBuscadorEl.addEventListener('shown.bs.modal', function() {
+                    inputBusqueda.focus();
+                });
+            }
+
+            // ==================== BUSCAR DESDE URL (?q=...) ====================
             const urlParams = new URLSearchParams(window.location.search);
             const q = urlParams.get('q');
             if (q) {
                 inputBusqueda.value = q;
+                // Abrir modal automáticamente y buscar
+                if (modalBuscadorEl && window.bootstrap) {
+                    const modal = new bootstrap.Modal(modalBuscadorEl);
+                    modal.show();
+                }
                 setTimeout(realizarBusqueda, 500);
             }
 
-            console.log('✅ Buscador global inicializado');
+            console.log('✅ Buscador global inicializado (modal)');
 
         })();
     </script>
